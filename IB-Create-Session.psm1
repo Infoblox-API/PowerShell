@@ -1,22 +1,4 @@
-function script:IB-Ignore-Self-Signed-Certs {
-########################################
-# Do the following to ignore self-signed certificates
-    add-type @"
-        using System.Net;
-        using System.Security.Cryptography.X509Certificates;
-        public class TrustAllCertsPolicy : ICertificatePolicy {
-            public bool CheckValidationResult(
-                ServicePoint srvPoint, X509Certificate certificate,
-                WebRequest request, int certificateProblem) {
-                return true;
-            }
-        }
-"@
-    [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-}
-
-
-function script:IB-Create-Session {
+function script:Connect-GridMaster {
     <#
     .SYNOPSIS
         Establishes a session to an Infoblox Grid Master for all subsequent data calls.
@@ -146,3 +128,6 @@ function script:IB-Create-Session {
 
 # IB-Ignore-Self-Signed-Certs
 # IB-Create-Session 192.168.1.2 admin -ask_pw
+
+# Set-IgnoreSelfSignedCerts
+# Connect-GridMaster 192.168.1.2 admin -ask_pw
