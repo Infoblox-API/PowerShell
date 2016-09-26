@@ -17,20 +17,25 @@ function script:IB-Ignore-Self-Signed-Certs {
 
 
 function script:IB-Create-Session {
-<#
-.SYNOPSIS
-Establishes a session to an Infoblox Grid Master for all subsequent data calls.
-.PARAMETER grid_master 
-A single computer name or IP address.
-.EXAMPLE
-IB-Create-Session 192.168.1.2 admin infoblox
-Creates a connection to a Grid Master using default credentials and IP address.
-.EXAMPLE 
-IB-Create-Session 192.168.1.2 admin -ask_pw
-Creates a connection but allows entering the password securely (via prompt with masking).
-.NOTES
-This should be the first command run to ensure that a connection is established and global variables are properly configured.
-#>
+    <#
+    .SYNOPSIS
+        Establishes a session to an Infoblox Grid Master for all subsequent data calls.
+        
+    .PARAMETER grid_master 
+        A single computer name or IP address.
+        
+    .EXAMPLE
+        IB-Create-Session 192.168.1.2 admin infoblox
+        Creates a connection to a Grid Master using default credentials and IP address.
+        
+    .EXAMPLE 
+        IB-Create-Session 192.168.1.2 admin -ask_pw
+        Creates a connection but allows entering the password securely (via prompt with masking).
+        
+    .NOTES
+        This should be the first command run to ensure that a connection is established and global variables are properly configured.
+        
+    #>
     Param (
         [Parameter(Mandatory=$false,Position=0)]
             [string]$grid_master = "192.168.1.2",
