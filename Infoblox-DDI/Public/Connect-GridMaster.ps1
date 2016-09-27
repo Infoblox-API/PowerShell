@@ -66,7 +66,7 @@ function script:Connect-GridMaster {
         [Parameter(Mandatory=$false,Position=3)]
             [string]$wapi_ver    = "v1.3",
         [Parameter(Mandatory=$false,Position=4)]
-            [int]$max_results = "_max_results=1000",
+            [int]$max_results    = "1000",
         [Parameter(Mandatory=$false)]
             [switch]$force,
         [Parameter(Mandatory=$false)]

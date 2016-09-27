@@ -41,7 +41,7 @@ function script:Set-MaxResults {
 	END {
 		if ($okay) {
 			$script:ib_max_results = $max_results
-			Write-Host "MaxResults: '$script:ib_max_results'"
+			Write-Host "MaxResults  : '$script:ib_max_results'"
 		}
 	}
 }
