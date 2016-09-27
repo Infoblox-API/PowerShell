@@ -105,7 +105,7 @@ function script:Connect-GridMaster {
         }
         $credential = New-Object System.Management.Automation.PSCredential ($username, $secure_pw)
         $uri_base = "https://$grid_master/wapi/$wapi_ver"
-        Write-Debug "[DEBUG] Create-Session:  URI base = $uri_base"
+        Write-Debug "[DEBUG] Connect-GridMaster:  URI base = $uri_base"
 
         ##########
         # Establish an initial connection
@@ -139,5 +139,3 @@ function script:Connect-GridMaster {
 
 
 export-modulemember -function Connect-GridMaster
-
-# Connect-GridMaster 192.168.1.2 admin -ask_pw
