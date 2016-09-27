@@ -64,8 +64,14 @@ function script:Find-Object {
 		# Append the max results we want returned
 		if ($script:ib_max_results) { $uri = "$uri"+'&'+"_max_results=$script:ib_max_results" }
 		
-        Write-Debug "[DEBUG] Find-Object: uri = $uri"
+		# Debug the URI
+        Write-Debug "[DEBUG-URI] [Find-Object] uri = $uri"
 
+		# Encode the URI for safety
+		$uri = [uri]::EscapeUriString($uri)
+		Write-Debug "[DEBUG-URI-ENC] [Find-Object] uri = $uri"
+
+		# Send the request and print any error messages
         try {
             $results = Invoke-RestMethod -Uri $uri -Method Get -WebSession $ib_session
         } catch {

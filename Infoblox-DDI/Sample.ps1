@@ -4,7 +4,7 @@ Write-Host ""
 $GridMaster = Read-Host "Grid Master"
 $Username   = Read-Host "Username"
 
-Connect-IBGridMaster $GridMaster $Username -ask -force
+Connect-IBGridMaster $GridMaster $Username -ask -force -Debug
 
 Show-IBSessionVariables
 Write-Host ""

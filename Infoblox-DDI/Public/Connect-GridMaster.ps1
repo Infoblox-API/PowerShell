@@ -95,9 +95,8 @@ function script:Connect-GridMaster {
 			Write-Debug "[DEBUG] Forcing connection"
 			Set-IgnoreSelfSignedCerts
 		}
-		
-        ##########
-        # Build the values that need built
+
+        # Prompt for the password, if required and build the credentials
         if ($ask_pw) {
             $secure_pw = $( Read-Host -Prompt "Enter password" -AsSecureString )
             Write-Host ""
@@ -105,13 +104,16 @@ function script:Connect-GridMaster {
             $secure_pw = ConvertTo-SecureString $password -AsPlainText -Force
         }
         $credential = New-Object System.Management.Automation.PSCredential ($username, $secure_pw)
+
+		# Set the base URI for all WAPI requests
         $uri_base = "https://$grid_master/wapi/$wapi_ver"
         Write-Debug "[DEBUG] Connect-GridMaster:  URI base = $uri_base"
 
-        ##########
-        # Establish an initial connection
-        #   Exit if there is an error
-        $uri = "$uri_base/grid"
+        # Encode the URI so we don't run into any issues
+        $uri = [uri]::EscapeUriString("$uri_base/grid")
+        Write-Debug "[DEBUG] Connect-GridMaster:  URI (escaped) = $uri"
+
+		# Make a connection to the Grid and print the detailed error message as necessary
         try {
             $grid_obj = Invoke-RestMethod -Uri $uri -Method Get -Credential $credential -SessionVariable new_session
         } catch {
@@ -119,7 +121,8 @@ function script:Connect-GridMaster {
             Write-Host $_.ErrorDetails
             return $false
         }
-    
+
+		# Get the name of the Grid
         $s1        = $grid_obj._ref.IndexOf(":")
         $grid_name = $grid_obj._ref.Substring( $( $s1 + 1 ) )
 
@@ -133,7 +136,7 @@ function script:Connect-GridMaster {
         $script:ib_username    = $username
         $script:ib_wapi_ver    = $wapi_ver
 
-        Write-Verbose "# You are now connected to Grid: '$grid_name'"
+        Write-Host "# Connected to Grid: '$grid_name'"
 
         return $true
     }

@@ -29,5 +29,3 @@ function script:Set-IgnoreSelfSignedCerts {
 "@
     [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 }
-
-# export-modulemember -function Set-IgnoreSelfSignedCerts
