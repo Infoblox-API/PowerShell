@@ -53,11 +53,17 @@ function script:Find-Object {
 
     END {
         Write-Verbose "[Find-Object] $objtype : $search_string"
-        # Build the URI
-        # Search for the object reference
+
+        # Build the URI filter/search string
         if ($search_string)  { $uri_filter = "search_string~=$search_string" }
         if ($objtype)        { $uri_filter = "$uri_filter"+'&'+"objtype=$objtype" }
+
+		# Assemble the URI search string
         $uri        = "$ib_uri_base/search"+'?'+"$uri_filter"
+
+		# Append the max results we want returned
+		if ($script:ib_max_results) { $uri = "$uri"+'&'+"_max_results=$script:ib_max_results" }
+		
         Write-Debug "[DEBUG] Find-Object: uri = $uri"
 
         try {

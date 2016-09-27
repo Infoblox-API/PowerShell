@@ -9,7 +9,13 @@ Connect-IBGridMaster $GridMaster $Username -ask -force
 Show-IBSessionVariables
 Write-Host ""
 
-Find-IBNetwork 192.168.1.0
+Find-IBNetwork 192.168.1.0 | Format-Table
 
+$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json
+$test_data
+
+<<<<<<< HEAD
+=======
 Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201
 
+>>>>>>> master

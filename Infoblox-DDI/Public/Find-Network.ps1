@@ -36,7 +36,7 @@ function script:Find-Network {
 
     END {
         Write-Verbose "[Find-Network] $search_string"
-        $local_results = Find-Object -search_string $search_string -objtype network
+        $local_results = script:Find-Object -search_string $search_string -objtype network
 
         return $local_results
     }

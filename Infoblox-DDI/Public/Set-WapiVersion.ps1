@@ -32,7 +32,7 @@ function script:Set-WapiVersion {
 	PROCESS {
 		# Validate that the string was submitted correctly
 		if ($wapi_ver -match "v[1-9]{1,}\.*[0-9]*") {
-			Write-Debug "[DEBUG] Changing WAPI version from '$ib_wapi_ver' to '$wapi_ver'"
+			Write-Debug "[DEBUG] Changing WAPI version from '$script:ib_wapi_ver' to '$wapi_ver'"
 			$okay = $true
 		} else {
 			Write-Host "[ERROR] You entered a WAPI version string in the wrong format.  Try 'v#.#' (for example, v1.3)."
@@ -42,10 +42,10 @@ function script:Set-WapiVersion {
 	END {
 		if ($okay) {
 			$script:ib_wapi_ver = $wapi_ver
-			$script:ib_uri_base = "https://$script:ib_grid_master/wapi/$script:ib_wapi_ver"
-
-			Write-Host "URI Base    : '$script:ib_uri_base'"
 			Write-Host "WAPI Version: '$script:ib_wapi_ver'"
+
+			$script:ib_uri_base = "https://$script:ib_grid_master/wapi/$script:ib_wapi_ver"
+			Write-Host "URI Base    : '$script:ib_uri_base'"
 		}
 	}
 }

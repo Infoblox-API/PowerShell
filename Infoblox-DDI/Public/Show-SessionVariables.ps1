@@ -18,11 +18,12 @@ function script:Show-SessionVariables {
 	}
 	
 	END {
-		Write-Host "Grid Master : '$ib_grid_master'"
-		Write-Host "Grid Name   : '$ib_grid_name'"
-		Write-Host "Grid Ref    : '$ib_grid_ref'"
-		Write-Host "URI Base    : '$ib_uri_base'"
-		Write-Host "Username    : '$ib_username'"
-		Write-Host "WAPI Version: '$ib_wapi_ver'"
+		Write-Host "Grid Master : '$script:ib_grid_master'"
+		Write-Host "Grid Name   : '$script:ib_grid_name'"
+		Write-Host "Grid Ref    : '$script:ib_grid_ref'"
+		Write-Host "Max Results : '$script:ib_max_results'"
+		Write-Host "URI Base    : '$script:ib_uri_base'"
+		Write-Host "Username    : '$script:ib_username'"
+		Write-Host "WAPI Version: '$script:ib_wapi_ver'"
 	}
 }

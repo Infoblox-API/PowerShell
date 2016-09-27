@@ -2,14 +2,14 @@
 	.SYNOPSIS
 		Uses the JavaScript serializer object.   
 #>
-function script:ConvertFrom-JSON {
+function script:IB-ConvertFrom-JSON {
     Param (
         [Parameter(Mandatory=$true,ValueFromPipeline=$true)] 
             $json
     )
 
     BEGIN {
-        Write-Verbose '[convert-from-json] Begin'
+        Write-Verbose '[IB-ConvertFrom-JSON] Begin'
         $ser  = New-Object System.Web.Script.Serialization.JavaScriptSerializer
         $data_array = @()
     }

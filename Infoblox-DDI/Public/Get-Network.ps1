@@ -8,6 +8,9 @@
 	.Parameter _ref
 		The network reference obtained from a 'find' operation
 		
+	.Parameter json
+		Converts the data results to JSON format on return
+		
 	.Outputs
 		An object array of name/value pairs
 		
@@ -20,8 +23,10 @@
 
 function script:Get-Network {
     Param (
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
-            [string]$_ref
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName=$true,Position=0)]
+            [string]$_ref,
+		[Parameter(Mandatory=$false,Position=1)]
+			[switch]$json
     )
 
     BEGIN {
@@ -29,18 +34,26 @@ function script:Get-Network {
     }
 
     PROCESS {
-        Write-Verbose "[get-member] $_ref"
+        Write-Verbose "[Get-Network] [$_ref] [$json]"
         # Specify the extra fields to return
         $return_fields = "comment,extattrs,members"
 
         # Get the data being requested
+		Write-Debug "[Get-Network] Retrieve network object"
         $local_results = Get-Object -_ref $_ref -_return_fields $return_fields
 
         # Add the data to our array
+		Write-Debug "[Get-Network] Append results with previous"
         $data_array += $local_results
     }
 
     END {
-        return $data_array
+        if ($json) {
+		    Write-Debug "[Get-Network] return results in JSON format"
+            return $data_array | ConvertTo-JSON -Depth 4
+        } else {
+		    Write-Debug "[Get-Network] return results"
+            return $data_array
+        }
     }
 }

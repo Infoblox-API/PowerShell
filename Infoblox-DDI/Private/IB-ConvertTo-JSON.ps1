@@ -2,7 +2,7 @@
 	.SYNOPSIS
 		Uses the JavaScript serializer object. The built-in PS ConvertTo-Json script is broken for nested extattr information.
 #>
-function script:ConvertTo-JSON {
+function script:IB-ConvertTo-JSON {
     Param (
         [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
             $data
