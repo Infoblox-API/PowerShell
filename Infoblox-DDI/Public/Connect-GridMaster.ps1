@@ -66,7 +66,7 @@ function script:Connect-GridMaster {
         [Parameter(Mandatory=$false,Position=3)]
             [string]$wapi_ver    = "v1.3",
         [Parameter(Mandatory=$false,Position=4)]
-            [string]$max_results = "_max_results=10000",
+            [int]$max_results = "_max_results=1000",
         [Parameter(Mandatory=$false)]
             [switch]$force,
         [Parameter(Mandatory=$false)]
@@ -78,6 +78,7 @@ function script:Connect-GridMaster {
         $script:ib_grid_name   = $null
         $script:ib_grid_master = $null
         $script:ib_grid_ref    = $null
+		$script:ib_max_results = $null
         $script:ib_session     = $null
         $script:ib_uri_base    = $null
         $script:ib_username    = $null
@@ -126,6 +127,7 @@ function script:Connect-GridMaster {
         $script:ib_grid_name   = $grid_name
         $script:ib_grid_master = $grid_master
         $script:ib_grid_ref    = $( $grid_obj._ref )
+		$script:ib_max_results = $max_results
         $script:ib_session     = $new_session
         $script:ib_uri_base    = $uri_base
         $script:ib_username    = $username
