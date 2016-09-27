@@ -44,16 +44,24 @@ function script:Get-Object {
         Write-Debug "[DEBUG] [Get-Object] _ref           = $_ref"
         Write-Debug "[DEBUG] [Get-Object] _return_fields = $_return_fields"
 
+		# Set up the URI
         $uri_return_type = "_return_type=json-pretty"
         $uri = "$ib_uri_base/$_ref"+'?'+$uri_return_type
 
+		# Add the requested return fields to the URI
         if ($_return_fields) {
-            $uri = "$uri"+'&'+"_return_fields%2b=$_return_fields"
+            $uri = "$uri"+'&'+"_return_fields+=$_return_fields"
         }
 
+		# Set the limit for the maximum results to return
 		if ($script:ib_max_results) { $uri = "$uri"+'&'+"_max_results=$script:ib_max_results" }
 
+		# Debug the URI
         Write-Debug "[DEBUG-URI] [Get-Object] $uri"
+
+		# Encode the URI for safety
+		$uri = [uri]::EscapeUriString($uri)
+		Write-Debug "[DEBUG-URI-ENC] [Get-Object] $uri"
 
         # Try to obtain the data and print an error message if there is one
         try {
@@ -70,14 +78,16 @@ function script:Get-Object {
         # Deserialize the JSON data into something manageable
         $data = $obj_content | IB-ConvertFrom-JSON
 
+		# Debug the raw data
 		Write-Debug "[DEBUG] [Get-Object] Got data '$data'"
 
+		# Append the raw data into an array (for pipeline requests)
         $data_array += $data
 		Write-Debug "[DEBUG] [Get-Object] Array '$data_array'"
     }
 
     END {
-		Write-Debug "[DEBUG] [Get-Object] Returning data as is"
+		Write-Debug "[DEBUG] [Get-Object] Returning data array"
 		return $data_array
     }
 }
