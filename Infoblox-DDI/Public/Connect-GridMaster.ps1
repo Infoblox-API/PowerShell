@@ -136,6 +136,3 @@ function script:Connect-GridMaster {
         return $true
     }
 }
-
-
-export-modulemember -function Connect-GridMaster

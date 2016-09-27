@@ -26,5 +26,3 @@ function script:Show-SessionVariables {
 		Write-Host "WAPI Version: '$ib_wapi_ver'"
 	}
 }
-
-export-modulemember -function Show-SessionVariables

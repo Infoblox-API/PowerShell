@@ -49,5 +49,3 @@ function script:Set-WapiVersion {
 		}
 	}
 }
-
-export-modulemember -function Show-SessionVariables
