@@ -74,6 +74,8 @@ function script:Connect-GridMaster {
     )
 
     BEGIN {
+		Write-Debug "[DEBUG:Connect-GridMaster] Begin"
+
         # Reset all script variables to null until a successful connection is established
         $script:ib_grid_name   = $null
         $script:ib_grid_master = $null
@@ -92,7 +94,7 @@ function script:Connect-GridMaster {
     END {
 		# Check to see if we are forcing a connection to a Grid with self-signed certificates
 		if ($force) {
-			Write-Debug "[DEBUG] Forcing connection"
+			Write-Debug "[DEBUG:Connect-GridMaster] Forcing connection"
 			Set-IgnoreSelfSignedCerts
 		}
 
@@ -107,7 +109,7 @@ function script:Connect-GridMaster {
 
 		# Set the base URI for all WAPI requests
         $uri_base = "https://$grid_master/wapi/$wapi_ver"
-        Write-Debug "[DEBUG] Connect-GridMaster:  URI base = $uri_base"
+        Write-Debug "[DEBUG:Connect-GridMaster] URI base = $uri_base"
 
         # Set the URI to retrieve the Grid object
         $uri = "$uri_base/grid"
@@ -116,8 +118,8 @@ function script:Connect-GridMaster {
         try {
             $grid_obj = Invoke-RestMethod -Uri $uri -Method Get -Credential $credential -SessionVariable new_session
         } catch {
-            Write-Host '[ERROR] There was an error connecting to the Grid.'
-            Write-Host $_.ErrorDetails
+            Write-Error '[ERROR:Connect-GridMaster] There was an error connecting to the Grid.'
+            Write-Error $_.ErrorDetails
             return $false
         }
 

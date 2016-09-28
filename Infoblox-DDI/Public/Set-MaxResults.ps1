@@ -25,16 +25,17 @@ function script:Set-MaxResults {
 	)
 
 	BEGIN {
+		Write-Debug "[DEBUG:Set-MaxResults] Begin"
 		$okay = $false
 	}
 	
 	PROCESS {
 		# Validate that the string was submitted correctly
 		if (($max_results -gt 0) -and ($max_results -lt 1000001)) {
-			Write-Debug "[DEBUG] Changing max results from '$script:ib_max_results' to '$max_results'"
+			Write-Debug "[DEBUG:Set-MaxResults] Changing max results from '$script:ib_max_results' to '$max_results'"
 			$okay = $true
 		} else {
-			Write-Host "[ERROR] You must enter a value >0 and <=1000000."
+			Write-Error "[ERROR:Set-MaxResults] You must enter a value >0 and <=1000000."
 		}
 	}
 	

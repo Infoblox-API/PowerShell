@@ -30,8 +30,10 @@ function script:Get-Object {
     )
 
     BEGIN {
-        if (!$ib_session) {
-            Write-Host "[ERROR] [Get-Object] Try creating a session first. 'Connect-GridMaster'"
+        Write-Debug '[DEBUG:Get-Object] Begin'
+
+		if (!$ib_session) {
+            Write-Error "[ERROR:Get-Object] Try creating a session first. 'Connect-GridMaster'"
             return $false
         }
 
@@ -41,8 +43,8 @@ function script:Get-Object {
 
     PROCESS {
         Write-Verbose "[Get-Object] [$_ref] [$_return_fields]"
-        Write-Debug "[DEBUG] [Get-Object] _ref           = $_ref"
-        Write-Debug "[DEBUG] [Get-Object] _return_fields = $_return_fields"
+        Write-Debug "[DEBUG:Get-Object] _ref           = $_ref"
+        Write-Debug "[DEBUG:Get-Object] _return_fields = $_return_fields"
 
 		# Set up the URI
         $uri_return_type = "_return_type=json-pretty"
@@ -58,15 +60,15 @@ function script:Get-Object {
 		if ($script:ib_max_results) { $uri = "$uri"+'&'+"_max_results=$script:ib_max_results" }
 
 		# Debug the URI
-        Write-Debug "[DEBUG-URI] [Get-Object] $uri"
+        Write-Debug "[DEBUG:Get-Object] URI '$uri'"
 
         # Try to obtain the data and print an error message if there is one
         try {
             $local_results = Invoke-WebRequest -Uri $uri -Method Get -WebSession $ib_session
         } catch {
-            Write-Host "[ERROR] [Get-Object] There was an error getting the data."
-            Write-Host "[ERROR-URI] [Get-Object] $uri"
-            Write-Host $_.ErrorDetails
+            Write-Error "[ERROR:Get-Object] There was an error getting the data."
+            Write-Error "[ERROR:Get-Object] URI '$uri'"
+            Write-Error $_.ErrorDetails
         }  
 
         # Grab only the content portion of the returned object
@@ -76,15 +78,15 @@ function script:Get-Object {
         $data = $obj_content | IB-ConvertFrom-JSON
 
 		# Debug the raw data
-		Write-Debug "[DEBUG] [Get-Object] Got data '$data'"
+		Write-Debug "[DEBUG:Get-Object] Got data '$data'"
 
 		# Append the raw data into an array (for pipeline requests)
         $data_array += $data
-		Write-Debug "[DEBUG] [Get-Object] Array '$data_array'"
+		Write-Debug "[DEBUG:Get-Object] Array '$data_array'"
     }
 
     END {
-		Write-Debug "[DEBUG] [Get-Object] Returning data array"
+		Write-Debug "[DEBUG:Get-Object] Returning data array"
 		return $data_array
     }
 }

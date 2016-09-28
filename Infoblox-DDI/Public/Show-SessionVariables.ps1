@@ -12,6 +12,7 @@
 
 function script:Show-SessionVariables {
 	BEGIN {
+		Write-Debug "[DEBUG:Show-SessionVariables] Begin"
 	}
 	
 	PROCESS {

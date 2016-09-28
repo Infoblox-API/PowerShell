@@ -30,6 +30,7 @@ function script:Get-Network {
     )
 
     BEGIN {
+		Write-Debug "[DEBUG:Get-Network] Begin"
         [hashtable[]]$data_array = $null
     }
 
@@ -39,20 +40,20 @@ function script:Get-Network {
         $return_fields = "comment,extattrs,members"
 
         # Get the data being requested
-		Write-Debug "[Get-Network] Retrieve network object"
+		Write-Debug "[DEBUG:Get-Network] Retrieve network object"
         $local_results = Get-Object -_ref $_ref -_return_fields $return_fields
 
         # Add the data to our array
-		Write-Debug "[Get-Network] Append results with previous"
+		Write-Debug "[DEBUG:Get-Network] Append results with previous"
         $data_array += $local_results
     }
 
     END {
         if ($json) {
-		    Write-Debug "[Get-Network] return results in JSON format"
+		    Write-Debug "[DEBUG:Get-Network] return results in JSON format"
             return $data_array | ConvertTo-JSON -Depth 4
         } else {
-		    Write-Debug "[Get-Network] return results"
+		    Write-Debug "[DEBUG:Get-Network] return results"
             return $data_array
         }
     }
