@@ -50,7 +50,8 @@ function script:Get-Object {
 
 		# Add the requested return fields to the URI
         if ($_return_fields) {
-            $uri = "$uri"+'&'+"_return_fields+=$_return_fields"
+			# Replace '+' with '%2b'
+            $uri = "$uri"+'&'+"_return_fields%2b=$_return_fields"
         }
 
 		# Set the limit for the maximum results to return
@@ -58,10 +59,6 @@ function script:Get-Object {
 
 		# Debug the URI
         Write-Debug "[DEBUG-URI] [Get-Object] $uri"
-
-		# Encode the URI for safety
-		$uri = [uri]::EscapeUriString($uri)
-		Write-Debug "[DEBUG-URI-ENC] [Get-Object] $uri"
 
         # Try to obtain the data and print an error message if there is one
         try {

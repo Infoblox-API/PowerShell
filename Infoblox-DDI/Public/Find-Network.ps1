@@ -24,6 +24,13 @@
 
 #>
 
+#
+# May need a separate function to create the search string
+#   EAs: *Building=my_building
+#   * = %2A
+#
+
+
 function script:Find-Network {
     Param (
         [Parameter(Mandatory=$true,Position=0)]

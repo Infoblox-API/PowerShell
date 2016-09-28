@@ -21,5 +21,5 @@ Set-IBWapiVersion "v2.3.1"
 
 Find-IBNetwork 192.168.1.0 | Format-Table
 
-$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json
+$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json -Debug
 #$test_data
