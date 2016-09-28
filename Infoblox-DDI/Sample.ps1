@@ -1,9 +1,13 @@
 # Remove the module if loaded so we can reload it
 Get-Module Infoblox-DDI | Remove-Module
+clear
 
 # Load the current module
 Import-Module .\Infoblox-DDI.psd1
 Write-Host ""
+Get-Command -Module Infoblox-DDI
+Write-Host ""
+
 
 $GridMaster = Read-Host "Grid Master"
 $Username   = Read-Host "Username"
