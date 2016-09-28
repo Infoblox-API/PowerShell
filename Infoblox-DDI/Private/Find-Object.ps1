@@ -42,9 +42,11 @@ function script:Find-Object {
     )
 
     BEGIN {
-        # Make sure we already have a session established
+		Write-Debug "[DEBUG:Find-Object] Begin"
+
+		# Make sure we already have a session established
         if (!$ib_session) {
-            Write-Host "[ERROR] Try creating a session first using 'Connect-GridMaster'"
+            Write-Error "[ERROR:Find-Object] Try creating a session first using 'Connect-GridMaster'"
             return $false
         }
     }
@@ -65,14 +67,14 @@ function script:Find-Object {
 		if ($script:ib_max_results) { $uri = "$uri"+'&'+"_max_results=$script:ib_max_results" }
 		
 		# Debug the URI
-        Write-Debug "[DEBUG-URI] [Find-Object] uri = $uri"
+        Write-Debug "[DEBUG:Find-Object] URI '$uri'"
 
 		# Send the request and print any error messages
         try {
             $results = Invoke-RestMethod -Uri $uri -Method Get -WebSession $ib_session
         } catch {
-            Write-Host "[ERROR] There was an error performing the search."
-            write-host $_.ErrorDetails
+            Write-Error "[ERROR:Find-Object] There was an error performing the search."
+            write-Error $_.ErrorDetails
             return $false
         }
 
