@@ -1,5 +1,6 @@
 # Remove the module if loaded so we can reload it
 Get-Module Infoblox-DDI | Remove-Module
+clear
 
 # Load the current module
 Import-Module .\Infoblox-DDI.psd1
