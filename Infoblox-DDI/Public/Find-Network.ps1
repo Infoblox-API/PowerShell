@@ -7,6 +7,9 @@
 		
 	.Parameter search_string
 		A string in URI compatible format
+		
+	.Parameter return_fields
+		A list of comma separated return fields to be included in the results.
 
 	.Outputs
 		An array of results
@@ -34,12 +37,24 @@
 function script:Find-Network {
     Param (
         [Parameter(Mandatory=$true,Position=0)]
-            [string]$search_string = $null
+            [string]$search_string,
+		[Parameter(Mandatory=$false,Position=1)]
+			[string]$return_fields = $null
     )
 
-    BEGIN {    }
+    BEGIN {
+		Write-Debug "[DEBUG:Find-Network] Begin"
+		# Check to make sure the $return_fields value is comma separated
+		$fields_array = $return_fields.Split(",").Trim()
+		$return_fields = $fields_array -join ","
 
-    PROCESS {    }
+		# Add the return fields to the search string
+		
+    }
+
+    PROCESS {
+
+	}
 
     END {
         Write-Verbose "[Find-Network] $search_string"

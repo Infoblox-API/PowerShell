@@ -9,7 +9,7 @@ function script:IB-ConvertFrom-JSON {
     )
 
     BEGIN {
-        Write-Verbose '[IB-ConvertFrom-JSON] Begin'
+        Write-Debug '[DEBUG:IB-ConvertFrom-JSON] Begin'
         $ser  = New-Object System.Web.Script.Serialization.JavaScriptSerializer
         $data_array = @()
     }

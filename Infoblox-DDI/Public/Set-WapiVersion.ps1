@@ -33,6 +33,7 @@ function script:Set-WapiVersion {
 	)
 
 	BEGIN {
+		Write-Debug "[DEBUG:Set-WapiVersion] Begin"
 		$okay = $false
 	}
 	
@@ -40,12 +41,12 @@ function script:Set-WapiVersion {
 		# Determine if we need to retrieve the WAPI version from the schema
 		if ([string]::IsNullOrEmpty($wapi_ver)) {
 			# Get the highest version supported by the Grid
-			Write-Debug "[DEBUG] [Set-WapiVersion] No version string provided. Getting latest from the schema."
+			Write-Debug "[DEBUG:Set-WapiVersion] No version string provided. Getting latest from the schema."
 
 			$ibschema = Get-IBSchema
 			if ($ibschema -eq $false) {
 				# We have some error condition; abort
-				Write-Debug "[DEBUG] [Set-WapiVersion] Error retrieving schema. Can't set WAPI version."
+				Write-Debug "[DEBUG:Set-WapiVersion] Error retrieving schema. Can't set WAPI version."
 			}
 			else {
 				$lastItem       = $ibschema.supported_versions.Count - 1
@@ -57,13 +58,13 @@ function script:Set-WapiVersion {
 
 		# Validate that the string is in the correct format
 		if ($wapi_ver -match "v[1-9]{1,}\.*[0-9]*") {
-			Write-Debug "[DEBUG] [Set-WapiVersion] '$wapi_ver' matched regex" 
+			Write-Debug "[DEBUG:Set-WapiVersion] '$wapi_ver' matched regex" 
 			Write-Host "[Set-WapiVersion] Changing WAPI version from '$script:ib_wapi_ver' to '$wapi_ver'"
 			$okay = $true
 		}
 		else { 
-			Write-Debug "[DEBUG] [Set-WapiVersion] No match on regex and not null: '$wapi_ver'"
-			Write-Host "[ERROR] You entered a WAPI version string in the wrong format.  Try 'v#.#' (for example, v1.3)."
+			Write-Debug "[DEBUG:Set-WapiVersion] No match on regex and not null: '$wapi_ver'"
+			Write-Error "[ERROR:Set-WapiVersion] You entered a WAPI version string in the wrong format.  Try 'v#.#' (for example, v1.3)."
 		}
 	}
 	
