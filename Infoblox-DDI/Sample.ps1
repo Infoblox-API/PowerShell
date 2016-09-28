@@ -4,6 +4,9 @@ Get-Module Infoblox-DDI | Remove-Module
 # Load the current module
 Import-Module .\Infoblox-DDI.psd1
 Write-Host ""
+Get-Command -Module Infoblox-DDI
+Write-Host ""
+
 
 $GridMaster = Read-Host "Grid Master"
 $Username   = Read-Host "Username"
