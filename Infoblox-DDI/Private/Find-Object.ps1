@@ -67,10 +67,6 @@ function script:Find-Object {
 		# Debug the URI
         Write-Debug "[DEBUG-URI] [Find-Object] uri = $uri"
 
-		# Encode the URI for safety
-		$uri = [uri]::EscapeUriString($uri)
-		Write-Debug "[DEBUG-URI-ENC] [Find-Object] uri = $uri"
-
 		# Send the request and print any error messages
         try {
             $results = Invoke-RestMethod -Uri $uri -Method Get -WebSession $ib_session

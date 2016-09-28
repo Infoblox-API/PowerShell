@@ -109,9 +109,8 @@ function script:Connect-GridMaster {
         $uri_base = "https://$grid_master/wapi/$wapi_ver"
         Write-Debug "[DEBUG] Connect-GridMaster:  URI base = $uri_base"
 
-        # Encode the URI so we don't run into any issues
-        $uri = [uri]::EscapeUriString("$uri_base/grid")
-        Write-Debug "[DEBUG] Connect-GridMaster:  URI (escaped) = $uri"
+        # Set the URI to retrieve the Grid object
+        $uri = "$uri_base/grid"
 
 		# Make a connection to the Grid and print the detailed error message as necessary
         try {
