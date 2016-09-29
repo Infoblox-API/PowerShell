@@ -67,7 +67,7 @@ Write-Host "Find all networks in network container 25.25.0.0/16"
 Find-IBNetwork -network_container 25.25.0.0/16
 
 Write-Host "Find networks where the EA 'Country' does not equal 'US'"
-Find-IBNetwork -return_fields "extattrs" -search_string "*Country!=US" -Debug
+Find-IBNetwork -return_fields "extattrs" -search_string "*Country!=US" -Verbose
 
 #Write-Host "Get network with ref"
 #$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json
