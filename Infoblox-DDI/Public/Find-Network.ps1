@@ -1,19 +1,19 @@
 <#
 	.Synopsis
 		Search for an Infoblox network and return a list of results
-		
+
 	.Description
 		Requires at least one parameter for the search to work.
-		
+
 	.Parameter search_string
 		A string in WAPI URI compatible format.
-		
+
 	.Parameter return_fields
 		A list of comma separated return fields to be included in the results.
 
 	.Parameter comment
 		The comment or initial part of the comment to search for
-		
+
 	.Parameter comment_match_type
 		The operator to use for the comment search (defaults to '=' which is an exact match).
 		Acceptable options are: (1) '=' for an exact match, (2) ':=' for exact case insensitive match, (3) '~=' for contains, and (4) '~:=' for case insensitive begins with.
@@ -27,39 +27,39 @@
 
 	.Parameter network_view
 		The name of the network view to filter results for.
-		
+
 	.Parameter contains_address
 		Requires a valid IP address and will return the network the IP address belongs to.
 		WAPI documentation says this is only compatible with network_view.
-		
+
 	.Parameter network_container
 		Requires a network/mask (i.e. 172.16.0.0/16) and will return networks that are contained within this network container.
 
 	.Parameter unmanaged
 		Switch parameter that filters results to unmanaged networks only
-		
+
 	.Parameter ipv4member
 		Requires a valid IPv4 address and will return networks assigned to this Infoblox Grid member.
 
 	.Parameter ipv6member
 		Requires a valid IPv6 address and will return networks assigned to this Infoblox Grid member.
-		
+
 	.Parameter msftmember
 		Requires a valid IPv4 address and will return networks assigned to this Microsoft Grid member.
-	
+
 	.Outputs
 		An array of results
-		
+
 	.Example
 		Find-Network -return_fields "extattrs" -network 192.168
 
 		Find all networks starting with '192.168'" and include the 'extattrs' field in the results
-		
+
 	.Example
 		Find-Network -return_fields "extattrs" -network 192.168 -search_string "*Country=US"
 
 		Find all networks starting with '192.168' where the Country is 'US'" and include the 'extattrs' field in the results
-		
+
 	.Example
 		Find-Network -return_fields "extattrs" -comment test -comment_match_type ~:= -network_view external
 
@@ -68,9 +68,9 @@
 
 
 function script:Find-Network {
-    Param (
-        [Parameter(Mandatory=$false,Position=0)]
-            [string]$search_string,
+	Param (
+		[Parameter(Mandatory=$false,Position=0)]
+			[string]$search_string,
 		[Parameter(Mandatory=$false,Position=1)]
 			[string]$return_fields = $null,
 
@@ -112,9 +112,9 @@ function script:Find-Network {
 			[ValidatePattern("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")]
 			[string]$msftmember
 		
-    )
+	)
 
-    BEGIN {
+	BEGIN {
 		Write-Debug "[DEBUG:Find-Network] Begin"
 
 		# Set up our search array
@@ -122,13 +122,13 @@ function script:Find-Network {
 
 		# Set up for determining if we have a valid search string
 		$valid_search = $false
-	
+
 		# Check to make sure the $return_fields value is comma separated
 		$fields_array = $return_fields.Split(",").Trim()
 		$return_fields = $fields_array -join ","
 
 		# Include the search string passed
-        if (! [string]::IsNullorEmpty($search_string)) {
+		if (! [string]::IsNullorEmpty($search_string)) {
 			$search_array += "$search_string"
 		}
 
@@ -158,12 +158,12 @@ function script:Find-Network {
 			#$str1 = $str1 -replace " ", "%20"
 			$search_array += $str1
 		}
-		
+
 		# Set up contains_address filtering
 		if ($contains_address) {
 			$search_array += "contains_address=$contains_address"
 		}
-		
+
 		# Set up network_container filtering
 		if ($network_container) {
 			$search_array += "network_container=$network_container"
@@ -173,7 +173,7 @@ function script:Find-Network {
 		if ($unmanaged) {
 			$search_array += "unmanaged=1"
 		}
-		
+
 		# Process ipv4member, ipv6member, and msftmember
 		if ($ipv4member) {
 			$search_array += "member=dhcpmember,$ipv4member"
@@ -191,20 +191,20 @@ function script:Find-Network {
 		if ((! [string]::IsNullorEmpty($search_array)) -or (! [string]::IsNullorEmpty($search_string))) {
 			$valid_search = $true
 		}
-    }
+	}
 
-    PROCESS {
+	PROCESS {
 		# Make sure we have something to do
 		if (! $valid_search) {
 			Write-Host "[Find-Network] No valid search criteria provided"
 			return $false
 		}
 
-        # Build the URI base object filter
+		# Build the URI base object filter
 		$uri = "$ib_uri_base/network" + '?'
 
 		# Process the array we just built
-        if ($search_array.Count -gt 0) {
+		if ($search_array.Count -gt 0) {
 			# Add the return fields to the search string
 			$combined_search = $search_array -join '&'
 			Write-Debug "[DEBUG:Find-Network] combined_search = '$combined_search'"
@@ -219,7 +219,7 @@ function script:Find-Network {
 		if ($script:ib_max_results) { $uri += '&' + "_max_results=$script:ib_max_results" }
 		
 		# Debug the URI
-        Write-Debug "[DEBUG:Find-Network]     URI '$uri'"
+		Write-Debug "[DEBUG:Find-Network] URI '$uri'"
 
 		# Fix up the URI since the WAPI and/or PowerShell chokes
 		$uri = $uri -replace ' ', "%20"
@@ -227,17 +227,17 @@ function script:Find-Network {
 		$uri = $uri -replace '\+', "%2B"
 
 		# Debug the encoded URI
-        Write-Debug "[DEBUG:Find-Network] ENC-URI '$uri'"
+		Write-Debug "[DEBUG:Find-Network] ENC-URI '$uri'"
 	}
 
-    END {
+	END {
 		# Send the request and print any error messages
-        try {
-            $local_results = Invoke-RestMethod -Uri $uri -Method Get -WebSession $ib_session
-        } catch {
-            Write-Error "[ERROR:Find-Network] There was an error performing the network search."
+		try {
+			$local_results = Invoke-RestMethod -Uri $uri -Method Get -WebSession $ib_session
+		} catch {
+			Write-Error "[ERROR:Find-Network] There was an error performing the network search."
 			# $_.ErrorDetails is absolutely useless here
-            #Write-Host $_.ErrorDetails
+			#Write-Host $_.ErrorDetails
 
 			# Get the actual message provided by Infoblox
 			$result = $_.Exception.Response.GetResponseStream()
@@ -247,9 +247,9 @@ function script:Find-Network {
 			$responseBody = $reader.ReadToEnd()
 			Write-Error [ERROR:Find-Network] $responseBody
 
-            return $false
-        }
+			return $false
+		}
 
-        return $local_results
-    }
+		return $local_results
+	}
 }

@@ -1,10 +1,10 @@
 <#
 	.Synopsis
 		Show the values that are being used by the script for the active session
-		
+
 	.Description
 		Show values for all of the "script" local variables that are used during various connection attempts.
-		
+
 	.Outputs
 		Simple table of values
 
@@ -14,10 +14,10 @@ function script:Show-SessionVariables {
 	BEGIN {
 		Write-Debug "[DEBUG:Show-SessionVariables] Begin"
 	}
-	
+
 	PROCESS {
 	}
-	
+
 	END {
 		Write-Host "Grid Master : '$script:ib_grid_master'"
 		Write-Host "Grid Name   : '$script:ib_grid_name'"
