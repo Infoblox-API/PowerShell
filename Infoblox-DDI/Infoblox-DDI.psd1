@@ -85,24 +85,24 @@ AliasesToExport = '*'
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
 
-    PSData = @{
+	PSData = @{
 
-        # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Infoblox','IPAM'
+		# Tags applied to this module. These help with module discovery in online galleries.
+		Tags = 'Infoblox','IPAM'
 
-        # A URL to the license for this module.
-        LicenseUri = 'https://github.com/Ameritus/PowerShell-Test/LICENSE'
+		# A URL to the license for this module.
+		LicenseUri = 'https://github.com/Ameritus/PowerShell-Test/LICENSE'
 
-        # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/Ameritus/PowerShell-Test'
+		# A URL to the main website for this project.
+		ProjectUri = 'https://github.com/Ameritus/PowerShell-Test'
 
-        # A URL to an icon representing this module.
-        # IconUri = ''
+		# A URL to an icon representing this module.
+		# IconUri = ''
 
-        # ReleaseNotes of this module
-        ReleaseNotes = 'Nothing here.'
+		# ReleaseNotes of this module
+		ReleaseNotes = 'Nothing here.'
 
-    } # End of PSData hashtable
+	} # End of PSData hashtable
 
 } # End of PrivateData hashtable
 

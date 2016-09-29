@@ -1,42 +1,42 @@
 <#
 	.Synopsis
 		Allows changing the WAPI version.
-		
+
 	.Description
 		The WAPI version may need to change for some functions that perform differently between versions
-	
+
 	.Parameter wapi_ver
 		Requires the new string be entered in "vX.Y" format
-	
+
 	.Outputs
 		Updated URI value
-	
+
 	.Example
 		# Sets the WAPI version to the value provided
 		Set-WapiVersion "v2.3.1"
-		
+
 		WAPI Version: 'v2.3.1'
 		URI Base    : 'https://192.168.1.2/wapi/v2.3.1'
 
 	.Example
 		# Automatically sets the WAPI version to the highest supported
 		Set-WapiVersion
-		
+
 		WAPI Version: 'v2.3.1'
 		URI Base    : 'https://192.168.1.2/wapi/v2.3.1'
 #>
 
 function script:Set-WapiVersion {
 	Param (
-        [Parameter(Mandatory=$false,Position=0)]
-            [string]$wapi_ver = $null
+		[Parameter(Mandatory=$false,Position=0)]
+			[string]$wapi_ver = $null
 	)
 
 	BEGIN {
 		Write-Debug "[DEBUG:Set-WapiVersion] Begin"
 		$okay = $false
 	}
-	
+
 	PROCESS {
 		# Determine if we need to retrieve the WAPI version from the schema
 		if ([string]::IsNullOrEmpty($wapi_ver)) {
@@ -67,7 +67,7 @@ function script:Set-WapiVersion {
 			Write-Error "[ERROR:Set-WapiVersion] You entered a WAPI version string in the wrong format.  Try 'v#.#' (for example, v1.3)."
 		}
 	}
-	
+
 	END {
 		if ($okay) {
 			$script:ib_wapi_ver = $wapi_ver
