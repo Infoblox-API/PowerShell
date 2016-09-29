@@ -24,12 +24,12 @@ Search Modifiers
 
 A search argument can use the following modifiers:
 
-Modifier	Functionality
-!	Negates the condition.
-:	Makes string matching case insensitive.
-~	Regular expression search. Expressions are unanchored.
-<	Less than or equal.
->	Greater than or equal.
+Modifier    Functionality
+!    Negates the condition.
+:    Makes string matching case insensitive.
+~    Regular expression search. Expressions are unanchored.
+<    Less than or equal.
+>    Greater than or equal.
 Only one of the following can be specified at one time: greater than, less than, and regular expressions.
 
 You can find the modifiers that are supported by each field in the respective documentation. Unsupported combinations will result in an error.

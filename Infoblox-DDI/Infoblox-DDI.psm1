@@ -7,14 +7,14 @@ $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction Silen
 # Dot source the files
 Foreach($import in @($Public + $Private))
 {
-	Try
-	{
-		. $import.fullname
-	}
-	Catch
-	{
-		Write-Error -Message "Failed to import function $($import.fullname): $_"
-	}
+    Try
+    {
+        . $import.fullname
+    }
+    Catch
+    {
+        Write-Error -Message "Failed to import function $($import.fullname): $_"
+    }
 }
 
 # Export everything in the public folder
