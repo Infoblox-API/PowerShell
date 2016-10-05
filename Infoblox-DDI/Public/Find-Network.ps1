@@ -177,7 +177,6 @@ function script:Find-Network {
         # Set up network_view filtering
         if ($network_view) {
             $str1 = "network_view=$network_view"
-            #$str1 = $str1 -replace " ", "%20"
             $search_array += $str1
         }
 
