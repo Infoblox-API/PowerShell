@@ -11,8 +11,8 @@ Write-Host ""
 #$GridMaster = Read-Host "Grid Master"
 #$Username   = Read-Host "Username"
 #Connect-IBGridMaster $GridMaster $Username -ask -force
-#Connect-IBGridmaster demogm1.infoblox.com dsmith -ask -force
-Connect-IBGridMaster 172.16.98.15 admin infoblox -force
+Connect-IBGridmaster demogm1.infoblox.com dsmith -ask -force
+#Connect-IBGridMaster 172.16.98.15 admin infoblox -force
 
 Show-IBSessionVariables
 Write-Host ""
@@ -72,4 +72,3 @@ Find-IBNetwork -return_fields "extattrs" -search_string "*Country!=US" -Verbose
 #Write-Host "Get network with ref"
 #$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json
 #$test_data
-
