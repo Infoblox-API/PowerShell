@@ -11,8 +11,9 @@ Write-Host ""
 #$GridMaster = Read-Host "Grid Master"
 #$Username   = Read-Host "Username"
 #Connect-IBGridMaster $GridMaster $Username -ask -force
-Connect-IBGridmaster demogm1.infoblox.com dsmith -ask -force
+#Connect-IBGridmaster demogm1.infoblox.com dsmith -ask -force
 #Connect-IBGridMaster 172.16.98.15 admin infoblox -force
+Connect-IBGridMaster 172.16.98.16 admin infoblox -force
 
 Show-IBSessionVariables
 Write-Host ""

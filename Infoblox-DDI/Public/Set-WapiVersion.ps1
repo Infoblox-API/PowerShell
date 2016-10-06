@@ -73,7 +73,7 @@ function script:Set-WapiVersion {
             $script:ib_wapi_ver = $wapi_ver
             Write-Host "WAPI Version: '$script:ib_wapi_ver'"
 
-            $script:ib_uri_base = "https://$script:ib_grid_master/wapi/$script:ib_wapi_ver"
+            $script:ib_uri_base = "https://$script:ib_grid_master/wapi/$script:ib_wapi_ver/"
             Write-Host "URI Base    : '$script:ib_uri_base'"
         }
 
