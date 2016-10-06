@@ -36,6 +36,7 @@ function script:Set-ExtensibleAttribute {
         # Define a hash for the current pair of objects
         $myEA = @{}
 
+        #### Does not currently handle a multi-value EA
         # Add the value to the 'value' key
         $myEA.Add("value", $value)
 
