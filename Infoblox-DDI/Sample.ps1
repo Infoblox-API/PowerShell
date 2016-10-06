@@ -109,7 +109,7 @@ foreach ($key in $mykeys) {
 
 # Add a new EA (State = CA) to the network
 $myEAArray | ConvertTo-Json
-$myEAArray += Set-IBExtensibleAttribute "State" "CA"
+$myEAArray += Add-IBExtensibleAttribute "State" "CA"
 $myEAArray | ConvertTo-Json
 
 # Create the new object to store the data to write
@@ -126,7 +126,7 @@ $securePwd = ConvertTo-SecureString "infoblox" -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential ("admin", $securePwd)
 
 try {
-    $response = Invoke-RestMethod -Uri $uri -Method Put -ContentType 'application/json' -Body $jsonData -Credential $credential -Debug
+    $response = Invoke-RestMethod -Uri $uri -Method Put -ContentType 'application/json' -Body $jsonData -Credential $credential
 } catch {
     # Get the actual message provided by Infoblox
     $result = $_.Exception.Response.GetResponseStream()
