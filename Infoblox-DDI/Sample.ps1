@@ -18,6 +18,14 @@ Connect-IBGridMaster 172.16.98.16 admin infoblox -force
 Show-IBSessionVariables
 Write-Host ""
 
+$schema_obj = Get-IBSchema
+Write-Host "Objects supported by WAPI version: ", $schema_obj.supported_objects.Count
+
+# Could do checks to see if objects are supported by the current/in use WAPI version before acting on them
+#if ($schema_obj.supported_objects.Contains("network") -eq $true) {} else {}
+#if ($schema_obj.supported_objects.Contains("network") -eq $true) { Write-Host "1" } else { Write-Host "0" }
+
+
 # Fail tests
 #Write-Host "Fail Tests"
 #Set-IBMaxResults 0
@@ -29,7 +37,7 @@ Write-Host ""
 #Write-Host "Success Tests"
 Set-IBMaxResults 10
 #Set-IBWapiVersion "v1.7"
-Set-IBWapiVersion
+#Set-IBWapiVersion
 
 Write-Host "Find all networks starting with '192.168'"
 Find-IBNetwork -return_fields "extattrs" -network 192.168
@@ -73,3 +81,5 @@ Find-IBNetwork -return_fields "extattrs" -search_string "*Country!=US" -Verbose
 #Write-Host "Get network with ref"
 #$test_data = Get-IBNetwork network/ZG5zLm5ldHdvcmskMTkyLjE2OC4xLjAvMjQvMA:192.168.1.0/24/Company%201 -json
 #$test_data
+
+Get-IBSchema network | ConvertTo-Json

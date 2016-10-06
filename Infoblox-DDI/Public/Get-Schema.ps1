@@ -34,7 +34,7 @@ function script:Get-Schema {
         if (! [string]::IsNullorEmpty($objType)) {
             $uri = $script:ib_uri_base + $objType + "?_schema"
         } else {
-            $uri = "https://$script:ib_grid_master/wapi/v1.0/?_schema"
+            $uri = $script:ib_uri_base + "?_schema"
         }
         Write-Debug "[DEBUG:Get-Schema] URI = $uri"
 

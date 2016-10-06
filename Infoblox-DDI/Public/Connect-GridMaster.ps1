@@ -149,6 +149,11 @@ function script:Connect-GridMaster {
 
         Write-Host "# Connected to Grid: '$grid_name'"
 
+        # Update the schema version to the latest if we are still using v1.3
+        if ($wapi_ver -eq "v1.3") {
+            Set-IBWapiVersion
+        }
+
         return $true
     }
 }
