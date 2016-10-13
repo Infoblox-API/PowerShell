@@ -42,12 +42,14 @@ function script:Get-Object {
     }
 
     PROCESS {
+        $objectFound = 0
+
         Write-Verbose "[Get-Object] [$_ref] [$_return_fields]"
         Write-Debug "[DEBUG:Get-Object] _ref           = $_ref"
         Write-Debug "[DEBUG:Get-Object] _return_fields = $_return_fields"
 
         # Set up the URI
-        $uri_return_type = "_return_type=json-pretty"
+        $uri_return_type = "_return_type=json-pretty&_return_as_object=1"
         $uri = $script:ib_uri_base + "$_ref" + '?' + $uri_return_type
 
         # Add the requested return fields to the URI
@@ -65,9 +67,10 @@ function script:Get-Object {
         # Try to obtain the data and print an error message if there is one
         try {
             $local_results = Invoke-WebRequest -Uri $uri -Method Get -WebSession $script:ib_session
+            $objectFound++
         } catch {
-            Write-Error "[ERROR:Get-Object] There was an error getting the data."
-            Write-Error "[ERROR:Get-Object] URI '$uri'"
+            Write-Host "[ERROR:Get-Object] There was an error getting the data."
+            Write-Host "[ERROR:Get-Object] URI '$uri'"
             # $_.ErrorDetails is absolutely useless here
             #Write-Host $_.ErrorDetails
 
@@ -77,22 +80,25 @@ function script:Get-Object {
             $reader.BaseStream.Position = 0
             $reader.DiscardBufferedData()
             $responseBody = $reader.ReadToEnd()
-            Write-Error [ERROR:Get-Object] $responseBody
+            $responseObj = $responseBody | ConvertFrom-Json
 
+            Write-Host "[ERROR:Get-Object] '$responseObj.text'"
         }  
 
-        # Grab only the content portion of the returned object
-        $obj_content = $local_results.Content
+        if ($objectFound) {
+            # Grab only the content portion of the returned object
+            $obj_content = $local_results.Content
 
-        # Deserialize the JSON data into something manageable
-        $data = $obj_content | IB-ConvertFrom-JSON
+            # Deserialize the JSON data into something manageable
+            $data = $obj_content | IB-ConvertFrom-JSON
 
-        # Debug the raw data
-        Write-Debug "[DEBUG:Get-Object] Got data '$data'"
+            # Debug the raw data
+            Write-Debug "[DEBUG:Get-Object] Got data '$data'"
 
-        # Append the raw data into an array (for pipeline requests)
-        $data_array += $data
-        Write-Debug "[DEBUG:Get-Object] Array '$data_array'"
+            # Append the raw data into an array (for pipeline requests)
+            $data_array += $data
+            Write-Debug "[DEBUG:Get-Object] Array '$data_array'"
+        }
     }
 
     END {
