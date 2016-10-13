@@ -10,6 +10,7 @@ Foreach($import in @($Public + $Private))
     Try
     {
         . $import.fullname
+        Write-Debug "Imported function '$($import.fullname)'"
     }
     Catch
     {

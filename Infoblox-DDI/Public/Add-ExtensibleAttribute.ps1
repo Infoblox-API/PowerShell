@@ -19,7 +19,7 @@
         Set-ExtensibleAttribute "State" "VA"
 #>
 
-function script:Set-ExtensibleAttribute {
+function script:Add-ExtensibleAttribute {
     Param (
         [Parameter(Mandatory=$true,Position=0)]
             [string]$name,
@@ -28,7 +28,7 @@ function script:Set-ExtensibleAttribute {
     )
 
     BEGIN {
-        Write-Debug "[DEBUG:Set-ExtensibleAttribute] Begin"
+        Write-Debug "[DEBUG:Add-ExtensibleAttribute] Begin"
         $eaHash = @{}
     }
 
@@ -45,7 +45,7 @@ function script:Set-ExtensibleAttribute {
     }
 
     END {
-        Write-Debug "[DEBUG:Set-ExtensibleAttribute] End"
+        Write-Debug "[DEBUG:Add-ExtensibleAttribute] End"
         return $eaHash
     }
 }
