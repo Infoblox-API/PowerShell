@@ -3,8 +3,15 @@
 # Error checking is needed
 # A basic module should be created
 
-Import-Module “.\BloxOne-DDI.psm1”
+# Remove the module if loaded so we can reload it
+Get-Module BloxOne-DDI | Remove-Module
+clear
 
+# Load the current module
+Import-Module “.\BloxOne-DDI.psd1”
+Write-Host ""
+Get-Command -Module BloxOne-DDI
+Write-Host ""
 
 #
 # Read the INI file for a base configuration
@@ -34,6 +41,11 @@ $iniFile
 #
 # Set these values at the beginning of each script file or globally
 #
+$myUrl = Get-BaseUrl -cspApp "ddi"
+Write-Output "myUrl = $myUrl"
+
+exit
+
 $appUri = "/ddi"
 $baseUri = $iniFile.AMS.url + "/api" + $appUri + "/" + $iniFile.AMS.api_version
 $baseUri

@@ -17,13 +17,13 @@
         API Version as System.String
 
     .Outputs
-        BaseUrl as System.String
+        baseUrl as System.String
 
     .Parameter cspHostname
         Specifies the URI path to the Cloud Services Portal (CSP).
         Defaults to "https://csp.infoblox.com"
 
-    .Parameter app
+    .Parameter cspApp
         Specifies the app where the data is hosted
         Required as input
 
@@ -38,7 +38,7 @@
         Accesses the production CSP system, DDI application, using API version 1
 
     .Example
-        $baseUrl = Get-BaseUrl -app "ddi"
+        $baseUrl = Get-BaseUrl -cspApp "ddi"
         -----------
         Description
         Accesses the production CSP system, DDI application, using API version 1
@@ -47,5 +47,30 @@
         Get-BaseUrl
     #>
 
+  [CmdletBinding()]
+    Param(
+
+      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=0)]  
+      [string]$cspHostname = "https://csp.infoblox.com",
+
+      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=1)]  
+      [string]$cspApp,
+
+      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=2)]  
+      [string]$apiVersion = "v1"
+    )
+
+  BEGIN {
+      Write-Debug "[DEBUG:Get-BaseUrl] Begin"
+      $baseUrl = "$cspHostname/api/$cspApp/$apiVersion"
+  }
+
+  PROCESS {
+  }
+
+  END {
+    Write-Debug "[DEBUG:Get-BaseUrl] return results"
+    return $baseUrl
+  }
 
 }
