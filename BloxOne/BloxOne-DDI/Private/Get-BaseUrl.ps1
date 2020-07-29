@@ -1,48 +1,51 @@
 ﻿Function Get-BaseUrl {
-    <#  
-    .Synopsis  
+    <#
+    .Synopsis
         Constructs the BaseURL for all BloxOne API calls
-          
-    .Description  
+
+    .Description
         Creates the base URL for all application specific API calls
-          
-    .Notes  
+
+    .Notes
         Author      : Don Smith <dsmith@infoblox.com>
-        Source      : 
-        Version     : 1.0 - 2020-07-29 - Initial release  
-          
-        #Requires -Version 5.0  
-          
-    .Inputs  
-        System.String  
-          
-    .Outputs  
-        System.Collections.Hashtable  
-          
-    .Parameter FilePath  
-        Specifies the path to the input file.  
-          
-    .Example  
-        $FileContent = Get-IniContent "C:\myinifile.ini"  
-        -----------  
-        Description  
-        Saves the content of the c:\myinifile.ini in a hashtable called $FileContent  
-      
-    .Example  
-        $inifilepath | $FileContent = Get-IniContent  
-        -----------  
-        Description  
-        Gets the content of the ini file passed through the pipe into a hashtable called $FileContent  
-      
-    .Example  
-        C:\PS>$FileContent = Get-IniContent "c:\settings.ini"  
-        C:\PS>$FileContent["Section"]["Key"]  
-        -----------  
-        Description  
-        Returns the key "Key" of the section "Section" from the C:\settings.ini file  
-          
-    .Link  
-        Out-IniFile  
-    #>  
+        Version     : 1.0 - 2020-07-29 - Initial release
+        #Requires -Version 5.0
+
+    .Inputs
+        CSP Hostname URI as System.String
+        Application as System.String
+        API Version as System.String
+
+    .Outputs
+        BaseUrl as System.String
+
+    .Parameter cspHostname
+        Specifies the URI path to the Cloud Services Portal (CSP).
+        Defaults to "https://csp.infoblox.com"
+
+    .Parameter app
+        Specifies the app where the data is hosted
+        Required as input
+
+    .Parameter apiVersion
+        Specifies the API version
+        Defaults to "v1"
+
+    .Example
+        $baseUrl = Get-BaseUrl "https://csp.infoblox.com/" "ddi" "v1"
+        -----------
+        Description
+        Accesses the production CSP system, DDI application, using API version 1
+
+    .Example
+        $baseUrl = Get-BaseUrl -app "ddi"
+        -----------
+        Description
+        Accesses the production CSP system, DDI application, using API version 1
+
+    .Link
+        Get-BaseUrl
+    #>
+
 
 }

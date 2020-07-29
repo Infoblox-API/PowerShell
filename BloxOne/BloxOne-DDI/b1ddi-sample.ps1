@@ -3,16 +3,34 @@
 # Error checking is needed
 # A basic module should be created
 
-
-
 Import-Module “./BloxOne-DDI.psm1”
 
 
 #
 # Read the INI file for a base configuration
 #
-$iniFile = Get-IniContent ".\bloxone.ini"
+$iniFileName = ".\bloxone.ini"
+if (Test-Path $iniFileName) {
+    Write-Output "Found $iniFileName"
+    $iniFile = Get-IniContent $iniFileName
 
+    if ($iniFile.Contains("Private")) {
+        Write-Output "Attempting to load alternate INI file"
+        if (Test-Path $iniFile.Private.path) {
+            $iniFile = Get-IniContent $iniFile.Private.path
+        } else {
+            Write-Output "Alternate INI file specified not found"
+        }
+    }
+} else {
+    Write-Output "Did not find $iniFileName"
+    Write-Output "bloxone.ini not found in the current directory"
+    Write-Output "Use 'Get-IniContent ""filepath.ini""' to get started"
+}
+#$iniFile = Get-IniContent ".\bloxone.ini"
+#$iniFile
+#$iniFile = Get-IniContent $iniFile.Private.path
+$iniFile
 
 #
 # Set these values at the beginning of each script file or globally
