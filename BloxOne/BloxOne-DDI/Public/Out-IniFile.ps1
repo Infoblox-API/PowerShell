@@ -1,145 +1,145 @@
-Function Out-IniFile {  
-    <#  
-    .Synopsis  
-        Write hash content to INI file  
-          
-    .Description  
-        Write hash content to INI file  
-          
-    .Notes  
-        Author        : Oliver Lipkau <oliver@lipkau.net>  
-        Blog        : http://oliver.lipkau.net/blog/  
-        Source        : https://github.com/lipkau/PsIni 
-                      http://gallery.technet.microsoft.com/scriptcenter/ea40c1ef-c856-434b-b8fb-ebd7a76e8d91 
-        Version        : 1.0 - 2010/03/12 - Initial release  
-                      1.1 - 2012/04/19 - Bugfix/Added example to help (Thx Ingmar Verheij)  
-                      1.2 - 2014/12/11 - Improved handling for missing output file (Thx SLDR) 
-          
-        #Requires -Version 2.0  
-          
-    .Inputs  
-        System.String  
-        System.Collections.Hashtable  
-          
-    .Outputs  
-        System.IO.FileSystemInfo  
-          
-    .Parameter Append  
-        Adds the output to the end of an existing file, instead of replacing the file contents.  
-          
-    .Parameter InputObject  
-        Specifies the Hashtable to be written to the file. Enter a variable that contains the objects or type a command or expression that gets the objects.  
-  
-    .Parameter FilePath  
-        Specifies the path to the output file.  
-       
-     .Parameter Encoding  
-        Specifies the type of character encoding used in the file. Valid values are "Unicode", "UTF7",  
-         "UTF8", "UTF32", "ASCII", "BigEndianUnicode", "Default", and "OEM". "Unicode" is the default.  
-          
-        "Default" uses the encoding of the system's current ANSI code page.   
-          
-        "OEM" uses the current original equipment manufacturer code page identifier for the operating   
-        system.  
-       
-     .Parameter Force  
-        Allows the cmdlet to overwrite an existing read-only file. Even using the Force parameter, the cmdlet cannot override security restrictions.  
-          
-     .Parameter PassThru  
-        Passes an object representing the location to the pipeline. By default, this cmdlet does not generate any output.  
-                  
-    .Example  
-        Out-IniFile $IniVar "C:\myinifile.ini"  
-        -----------  
-        Description  
-        Saves the content of the $IniVar Hashtable to the INI File c:\myinifile.ini  
-          
-    .Example  
-        $IniVar | Out-IniFile "C:\myinifile.ini" -Force  
-        -----------  
-        Description  
-        Saves the content of the $IniVar Hashtable to the INI File c:\myinifile.ini and overwrites the file if it is already present  
-          
-    .Example  
-        $file = Out-IniFile $IniVar "C:\myinifile.ini" -PassThru  
-        -----------  
-        Description  
-        Saves the content of the $IniVar Hashtable to the INI File c:\myinifile.ini and saves the file into $file  
-  
-    .Example  
-        $Category1 = @{“Key1”=”Value1”;”Key2”=”Value2”}  
-    $Category2 = @{“Key1”=”Value1”;”Key2”=”Value2”}  
-    $NewINIContent = @{“Category1”=$Category1;”Category2”=$Category2}  
-    Out-IniFile -InputObject $NewINIContent -FilePath "C:\MyNewFile.INI"  
-        -----------  
-        Description  
-        Creating a custom Hashtable and saving it to C:\MyNewFile.INI  
-    .Link  
-        Get-IniContent  
-    #>  
-      
-    [CmdletBinding()]  
-    Param(  
-        [switch]$Append,  
-          
-        [ValidateSet("Unicode","UTF7","UTF8","UTF32","ASCII","BigEndianUnicode","Default","OEM")]  
-        [Parameter()]  
-        [string]$Encoding = "Unicode",  
- 
-          
-        [ValidateNotNullOrEmpty()]  
-        [ValidatePattern('^([a-zA-Z]\:)?.+\.ini$')]  
-        [Parameter(Mandatory=$True)]  
-        [string]$FilePath,  
-          
-        [switch]$Force,  
-          
-        [ValidateNotNullOrEmpty()]  
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)]  
-        [Hashtable]$InputObject,  
-          
-        [switch]$Passthru  
-    )  
-      
-    Begin  
-        {Write-Verbose "$($MyInvocation.MyCommand.Name):: Function started"}  
-          
-    Process  
-    {  
-        Write-Verbose "$($MyInvocation.MyCommand.Name):: Writing to file: $Filepath"  
-          
-        if ($append) {$outfile = Get-Item $FilePath}  
-        else {$outFile = New-Item -ItemType file -Path $Filepath -Force:$Force}  
-        if (!($outFile)) {Throw "Could not create File"}  
-        foreach ($i in $InputObject.keys)  
-        {  
-            if (!($($InputObject[$i].GetType().Name) -eq "Hashtable"))  
-            {  
-                #No Sections  
-                Write-Verbose "$($MyInvocation.MyCommand.Name):: Writing key: $i"  
-                Add-Content -Path $outFile -Value "$i=$($InputObject[$i])" -Encoding $Encoding  
-            } else {  
-                #Sections  
-                Write-Verbose "$($MyInvocation.MyCommand.Name):: Writing Section: [$i]"  
-                Add-Content -Path $outFile -Value "[$i]" -Encoding $Encoding  
-                Foreach ($j in $($InputObject[$i].keys | Sort-Object))  
-                {  
-                    if ($j -match "^Comment[\d]+") {  
-                        Write-Verbose "$($MyInvocation.MyCommand.Name):: Writing comment: $j"  
-                        Add-Content -Path $outFile -Value "$($InputObject[$i][$j])" -Encoding $Encoding  
-                    } else {  
-                        Write-Verbose "$($MyInvocation.MyCommand.Name):: Writing key: $j"  
-                        Add-Content -Path $outFile -Value "$j=$($InputObject[$i][$j])" -Encoding $Encoding  
-                    }  
-                      
-                }  
-                Add-Content -Path $outFile -Value "" -Encoding $Encoding  
-            }  
-        }  
-        Write-Verbose "$($MyInvocation.MyCommand.Name):: Finished Writing to file: $path"  
-        if ($PassThru) {Return $outFile}  
-    }  
-          
-    End  
-        {Write-Verbose "$($MyInvocation.MyCommand.Name):: Function ended"}  
-} 
+FunctionÂ Out-IniFileÂ {Â Â 
+Â Â Â Â <#Â Â 
+Â Â Â Â .SynopsisÂ Â 
+Â Â Â Â Â Â Â Â WriteÂ hashÂ contentÂ toÂ INIÂ fileÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .DescriptionÂ Â 
+Â Â Â Â Â Â Â Â WriteÂ hashÂ contentÂ toÂ INIÂ fileÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .NotesÂ Â 
+Â Â Â Â Â Â Â Â AuthorÂ Â Â Â Â Â Â Â :Â OliverÂ LipkauÂ <oliver@lipkau.net>Â Â 
+Â Â Â Â Â Â Â Â BlogÂ Â Â Â Â Â Â Â :Â http://oliver.lipkau.net/blog/Â Â 
+Â Â Â Â Â Â Â Â SourceÂ Â Â Â Â Â Â Â :Â https://github.com/lipkau/PsIniÂ 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â http://gallery.technet.microsoft.com/scriptcenter/ea40c1ef-c856-434b-b8fb-ebd7a76e8d91Â 
+Â Â Â Â Â Â Â Â VersionÂ Â Â Â Â Â Â Â :Â 1.0Â -Â 2010/03/12Â -Â InitialÂ releaseÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 1.1Â -Â 2012/04/19Â -Â Bugfix/AddedÂ exampleÂ toÂ helpÂ (ThxÂ IngmarÂ Verheij)Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 1.2Â -Â 2014/12/11Â -Â ImprovedÂ handlingÂ forÂ missingÂ outputÂ fileÂ (ThxÂ SLDR)Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â #RequiresÂ -VersionÂ 2.0Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .InputsÂ Â 
+Â Â Â Â Â Â Â Â System.StringÂ Â 
+Â Â Â Â Â Â Â Â System.Collections.HashtableÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .OutputsÂ Â 
+Â Â Â Â Â Â Â Â System.IO.FileSystemInfoÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .ParameterÂ AppendÂ Â 
+Â Â Â Â Â Â Â Â AddsÂ theÂ outputÂ toÂ theÂ endÂ ofÂ anÂ existingÂ file,Â insteadÂ ofÂ replacingÂ theÂ fileÂ contents.Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .ParameterÂ InputObjectÂ Â 
+Â Â Â Â Â Â Â Â SpecifiesÂ theÂ HashtableÂ toÂ beÂ writtenÂ toÂ theÂ file.Â EnterÂ aÂ variableÂ thatÂ containsÂ theÂ objectsÂ orÂ typeÂ aÂ commandÂ orÂ expressionÂ thatÂ getsÂ theÂ objects.Â Â 
+Â Â 
+Â Â Â Â .ParameterÂ FilePathÂ Â 
+Â Â Â Â Â Â Â Â SpecifiesÂ theÂ pathÂ toÂ theÂ outputÂ file.Â Â 
+Â Â Â Â Â Â Â 
+Â Â Â Â Â .ParameterÂ EncodingÂ Â 
+Â Â Â Â Â Â Â Â SpecifiesÂ theÂ typeÂ ofÂ characterÂ encodingÂ usedÂ inÂ theÂ file.Â ValidÂ valuesÂ areÂ "Unicode",Â "UTF7",Â Â 
+Â Â Â Â Â Â Â Â Â "UTF8",Â "UTF32",Â "ASCII",Â "BigEndianUnicode",Â "Default",Â andÂ "OEM".Â "Unicode"Â isÂ theÂ default.Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â "Default"Â usesÂ theÂ encodingÂ ofÂ theÂ system'sÂ currentÂ ANSIÂ codeÂ page.Â Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â "OEM"Â usesÂ theÂ currentÂ originalÂ equipmentÂ manufacturerÂ codeÂ pageÂ identifierÂ forÂ theÂ operatingÂ Â Â 
+Â Â Â Â Â Â Â Â system.Â Â 
+Â Â Â Â Â Â Â 
+Â Â Â Â Â .ParameterÂ ForceÂ Â 
+Â Â Â Â Â Â Â Â AllowsÂ theÂ cmdletÂ toÂ overwriteÂ anÂ existingÂ read-onlyÂ file.Â EvenÂ usingÂ theÂ ForceÂ parameter,Â theÂ cmdletÂ cannotÂ overrideÂ securityÂ restrictions.Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â .ParameterÂ PassThruÂ Â 
+Â Â Â Â Â Â Â Â PassesÂ anÂ objectÂ representingÂ theÂ locationÂ toÂ theÂ pipeline.Â ByÂ default,Â thisÂ cmdletÂ doesÂ notÂ generateÂ anyÂ output.Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .ExampleÂ Â 
+Â Â Â Â Â Â Â Â Out-IniFileÂ $IniVarÂ "C:\myinifile.ini"Â Â 
+Â Â Â Â Â Â Â Â -----------Â Â 
+Â Â Â Â Â Â Â Â DescriptionÂ Â 
+Â Â Â Â Â Â Â Â SavesÂ theÂ contentÂ ofÂ theÂ $IniVarÂ HashtableÂ toÂ theÂ INIÂ FileÂ c:\myinifile.iniÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .ExampleÂ Â 
+Â Â Â Â Â Â Â Â $IniVarÂ |Â Out-IniFileÂ "C:\myinifile.ini"Â -ForceÂ Â 
+Â Â Â Â Â Â Â Â -----------Â Â 
+Â Â Â Â Â Â Â Â DescriptionÂ Â 
+Â Â Â Â Â Â Â Â SavesÂ theÂ contentÂ ofÂ theÂ $IniVarÂ HashtableÂ toÂ theÂ INIÂ FileÂ c:\myinifile.iniÂ andÂ overwritesÂ theÂ fileÂ ifÂ itÂ isÂ alreadyÂ presentÂ Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â .ExampleÂ Â 
+Â Â Â Â Â Â Â Â $fileÂ =Â Out-IniFileÂ $IniVarÂ "C:\myinifile.ini"Â -PassThruÂ Â 
+Â Â Â Â Â Â Â Â -----------Â Â 
+Â Â Â Â Â Â Â Â DescriptionÂ Â 
+Â Â Â Â Â Â Â Â SavesÂ theÂ contentÂ ofÂ theÂ $IniVarÂ HashtableÂ toÂ theÂ INIÂ FileÂ c:\myinifile.iniÂ andÂ savesÂ theÂ fileÂ intoÂ $fileÂ Â 
+Â Â 
+Â Â Â Â .ExampleÂ Â 
+Â Â Â Â Â Â Â Â $Category1Â =Â @{â€œKey1â€=â€Value1â€;â€Key2â€=â€Value2â€}Â Â 
+Â Â Â Â $Category2Â =Â @{â€œKey1â€=â€Value1â€;â€Key2â€=â€Value2â€}Â Â 
+Â Â Â Â $NewINIContentÂ =Â @{â€œCategory1â€=$Category1;â€Category2â€=$Category2}Â Â 
+Â Â Â Â Out-IniFileÂ -InputObjectÂ $NewINIContentÂ -FilePathÂ "C:\MyNewFile.INI"Â Â 
+Â Â Â Â Â Â Â Â -----------Â Â 
+Â Â Â Â Â Â Â Â DescriptionÂ Â 
+Â Â Â Â Â Â Â Â CreatingÂ aÂ customÂ HashtableÂ andÂ savingÂ itÂ toÂ C:\MyNewFile.INIÂ Â 
+Â Â Â Â .LinkÂ Â 
+Â Â Â Â Â Â Â Â Get-IniContentÂ Â 
+Â Â Â Â #>Â Â 
+Â Â Â Â Â Â 
+Â Â Â Â [CmdletBinding()]Â Â 
+Â Â Â Â Param(Â Â 
+Â Â Â Â Â Â Â Â [switch]$Append,Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â [ValidateSet("Unicode","UTF7","UTF8","UTF32","ASCII","BigEndianUnicode","Default","OEM")]Â Â 
+Â Â Â Â Â Â Â Â [Parameter()]Â Â 
+Â Â Â Â Â Â Â Â [string]$EncodingÂ =Â "Unicode",Â Â 
+Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â [ValidateNotNullOrEmpty()]Â Â 
+Â Â Â Â Â Â Â Â [ValidatePattern('^([a-zA-Z]\:)?.+\.ini$')]Â Â 
+Â Â Â Â Â Â Â Â [Parameter(Mandatory=$True)]Â Â 
+Â Â Â Â Â Â Â Â [string]$FilePath,Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â [switch]$Force,Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â [ValidateNotNullOrEmpty()]Â Â 
+Â Â Â Â Â Â Â Â [Parameter(ValueFromPipeline=$True,Mandatory=$True)]Â Â 
+Â Â Â Â Â Â Â Â [Hashtable]$InputObject,Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â [switch]$PassthruÂ Â 
+Â Â Â Â )Â Â 
+Â Â Â Â Â Â 
+Â Â Â Â BeginÂ Â 
+Â Â Â Â Â Â Â Â {Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â FunctionÂ started"}Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â ProcessÂ Â 
+Â Â Â Â {Â Â 
+Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â WritingÂ toÂ file:Â $Filepath"Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â ifÂ ($append)Â {$outfileÂ =Â Get-ItemÂ $FilePath}Â Â 
+Â Â Â Â Â Â Â Â elseÂ {$outFileÂ =Â New-ItemÂ -ItemTypeÂ fileÂ -PathÂ $FilepathÂ -Force:$Force}Â Â 
+Â Â Â Â Â Â Â Â ifÂ (!($outFile))Â {ThrowÂ "CouldÂ notÂ createÂ File"}Â Â 
+Â Â Â Â Â Â Â Â foreachÂ ($iÂ inÂ $InputObject.keys)Â Â 
+Â Â Â Â Â Â Â Â {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â ifÂ (!($($InputObject[$i].GetType().Name)Â -eqÂ "Hashtable"))Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â #NoÂ SectionsÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â WritingÂ key:Â $i"Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Add-ContentÂ -PathÂ $outFileÂ -ValueÂ "$i=$($InputObject[$i])"Â -EncodingÂ $EncodingÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â }Â elseÂ {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â #SectionsÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â WritingÂ Section:Â [$i]"Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Add-ContentÂ -PathÂ $outFileÂ -ValueÂ "[$i]"Â -EncodingÂ $EncodingÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â ForeachÂ ($jÂ inÂ $($InputObject[$i].keysÂ |Â Sort-Object))Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â ifÂ ($jÂ -matchÂ "^Comment[\d]+")Â {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â WritingÂ comment:Â $j"Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Add-ContentÂ -PathÂ $outFileÂ -ValueÂ "$($InputObject[$i][$j])"Â -EncodingÂ $EncodingÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â }Â elseÂ {Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â WritingÂ key:Â $j"Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Add-ContentÂ -PathÂ $outFileÂ -ValueÂ "$j=$($InputObject[$i][$j])"Â -EncodingÂ $EncodingÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â }Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â }Â Â 
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Add-ContentÂ -PathÂ $outFileÂ -ValueÂ ""Â -EncodingÂ $EncodingÂ Â 
+Â Â Â Â Â Â Â Â Â Â Â Â }Â Â 
+Â Â Â Â Â Â Â Â }Â Â 
+Â Â Â Â Â Â Â Â Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â FinishedÂ WritingÂ toÂ file:Â $path"Â Â 
+Â Â Â Â Â Â Â Â ifÂ ($PassThru)Â {ReturnÂ $outFile}Â Â 
+Â Â Â Â }Â Â 
+Â Â Â Â Â Â Â Â Â Â 
+Â Â Â Â EndÂ Â 
+Â Â Â Â Â Â Â Â {Write-VerboseÂ "$($MyInvocation.MyCommand.Name)::Â FunctionÂ ended"}Â Â 
+}Â 

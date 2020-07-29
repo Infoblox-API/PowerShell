@@ -3,11 +3,13 @@
 # Error checking is needed
 # A basic module should be created
 
-Import-Module “./BloxOne-DDI.psm1”
+Import-Module “.\BloxOne-DDI.psm1”
 
 
 #
 # Read the INI file for a base configuration
+# Move this to another function with additional error checking
+# allow specifying a custom INI file
 #
 $iniFileName = ".\bloxone.ini"
 if (Test-Path $iniFileName) {
@@ -27,9 +29,6 @@ if (Test-Path $iniFileName) {
     Write-Output "bloxone.ini not found in the current directory"
     Write-Output "Use 'Get-IniContent ""filepath.ini""' to get started"
 }
-#$iniFile = Get-IniContent ".\bloxone.ini"
-#$iniFile
-#$iniFile = Get-IniContent $iniFile.Private.path
 $iniFile
 
 #
@@ -59,7 +58,7 @@ $Response = Invoke-RestMethod -Method ‘Get’ -Uri $objectUri -Headers $header
 # Loop through the objects and display the name
 #
 for ($i=0; $i -lt $Response.results.Length; $i++) {
-    "#$i " + $Response.results[$i].name
+    #"#$i " + $Response.results[$i].name
 }
 
 #
@@ -70,5 +69,6 @@ $firstObj = $Response.results[0]
 $firstObj
 
 
-$url = $iniFile.Sandbox.url + $appUri + $iniFile.Sandbox.api_version
+$url = $iniFile.Sandbox.url + "/api" + $appUri + "/" + $iniFile.Sandbox.api_version
+
 $url
