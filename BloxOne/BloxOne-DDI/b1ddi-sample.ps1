@@ -23,31 +23,21 @@ $headers = @{
 }
 
 # Get a hash table of all current DDI related API URLs
+# This example doesn't use any custom values
 [hashtable]$h = Get-DDIUrls
 
 # Change these as necessary
-$dhcpServers = “$h.ipamUrl/dhcp/server”
+$dhcpServers = $h.ipamUrl + "/dhcp/server”
 
-#
 # Get the object(s)
-#
 $serverList = Invoke-RestMethod -Method ‘Get’ -Uri $dhcpServers -Headers $headers
 
-#
 # Loop through the objects and display the name
-#
-for ($i=0; $i -lt $serverList.results.Length; $i++) {
-    "#$i " + $serverList.results[$i].name
-}
+#for ($i=0; $i -lt $serverList.results.Length; $i++) {
+    #"#$i " + $serverList.results[$i].name
+#}
 
-#
-# Display the first object details
-#
-$firstObj = $serverList.results[0]
-"Name of the first object is " + $firstObj.name
-$firstObj
-
-
-$url = $iniConfig.Sandbox.url + "/api" + $appUri + "/" + $iniConfig.Sandbox.api_version
-
+# Choose which section values we want to build the Url hashtable
+[hashtable]$h1 = Get-DDIUrls $iniConfig.Sample.url $iniConfig.Sample.api_version
+$url = $h1.ipamUrl
 $url
