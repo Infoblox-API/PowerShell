@@ -9,7 +9,6 @@
     .Notes
       Author    : Don Smith <dsmith@infoblox.com>
       Version   : 1.0 - 2020-07-29 - Initial release
-      #Requires -Version 5.0
 
     .Inputs
       CSP Hostname URI as System.String
