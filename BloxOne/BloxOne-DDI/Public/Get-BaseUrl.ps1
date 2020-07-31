@@ -11,14 +11,14 @@
         Version     : 1.0 - 2020-07-29 - Initial release
 
     .Inputs
-        CSP Hostname URI as System.String
+        CSP BaseURL as System.String
         Application as System.String
         API Version as System.String
 
     .Outputs
         baseUrl as System.String
 
-    .Parameter cspHostname
+    .Parameter cspBaseUrl
         Specifies the URI path to the Cloud Services Portal (CSP).
         Defaults to "https://csp.infoblox.com"
 
@@ -50,9 +50,9 @@
     Param(
 
       [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=0)]  
-      [string]$cspHostname = "https://csp.infoblox.com",
+      [string]$cspBaseUrl = "https://csp.infoblox.com",
 
-      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=1)]  
+      [Parameter(ValueFromPipeline=$True,Mandatory=$True,Position=1)]  
       [string]$cspApp,
 
       [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=2)]  
@@ -60,15 +60,25 @@
     )
 
   BEGIN {
-      Write-Debug "[DEBUG:Get-BaseUrl] Begin"
-      $baseUrl = "$cspHostname/api/$cspApp/$apiVersion"
+    Write-Debug "PsBoundParameters:"
+    $PSBoundParameters.GetEnumerator() | ForEach-Object { Write-Debug $_ }
+    if ($PSBoundParameters['Debug']) {
+        $DebugPreference = 'Continue'
+    }
+    Write-Debug "DebugPreference: $DebugPreference"
+    Write-Verbose "$($MyInvocation.MyCommand.Name):: Function started"
+
+    # Build the complete base API URL with the supplied information
+    $baseUrl = "$cspBaseUrl/api/$cspApp/$apiVersion"
+    Write-Verbose "baseUrl = $baseUrl"
   }
 
   PROCESS {
+    #Write-Verbose "$($MyInvocation.MyCommand.Name):: Processing"
   }
 
   END {
-    Write-Debug "[DEBUG:Get-BaseUrl] return results"
+    Write-Verbose "$($MyInvocation.MyCommand.Name):: Function ended"
     return $baseUrl
   }
 
