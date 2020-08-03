@@ -1,20 +1,8 @@
-# Requires 7
-### Sample PowerShell Script for BloxOne DDI
-### Author:  Don Smith
-### Author-Email: dsmith@infoblox.com
-### Version: 2020-08-03 Initial release
-
-$VerbosePreference = 'continue'
 
 
 
 
-# Read the INI file for the base configuration
-$iniConfig = Get-ConfigInfo
-Write-Output "Available config sections"
-foreach ($key in $iniConfig.Keys) {
-  Write-Output "    $key"
-}
+
 
 # Now build the Authorization header using the appropriate API Key from the config
 $headers = @{
@@ -48,4 +36,4 @@ Write-Output $iniConfig.Sample
 
 
 # Get us back to the test directory
-#Set-Location $testDir
+Set-Location $testDir
