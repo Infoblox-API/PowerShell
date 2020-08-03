@@ -49,13 +49,13 @@
   [CmdletBinding()]
     Param(
 
-      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=0)]  
+      [Parameter(Mandatory=$False,Position=0)]  
       [string]$cspBaseUrl = "https://csp.infoblox.com",
 
-      [Parameter(ValueFromPipeline=$True,Mandatory=$True,Position=1)]  
+      [Parameter(Mandatory=$True,Position=1)]  
       [string]$cspApp,
 
-      [Parameter(ValueFromPipeline=$True,Mandatory=$False,Position=2)]  
+      [Parameter(Mandatory=$False,Position=2)]  
       [string]$apiVersion = "v1"
     )
 
