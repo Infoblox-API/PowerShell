@@ -9,10 +9,13 @@
     .Notes
       Author    : Don Smith <dsmith@infoblox.com>
       Version   : 1.0 - 2020-07-29 - Initial release
+                : 1.1 - 2020-08-04 - Cleaned up notes
 
     .Inputs
-      CSP Hostname URI as System.String
-      API Version as System.String
+      CSP Hostname URI as String
+      API Version as String
+      iniConfig as hashtable
+      iniSection as String
 
     .Outputs
       System.Collections.Specialized.OrderedDictionary

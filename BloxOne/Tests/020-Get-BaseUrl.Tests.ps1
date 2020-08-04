@@ -33,7 +33,6 @@ if ($myUrl -eq "https://csp.infoblox.com/api/ddi/v1") {
     Expected Results:
         - generate a valid CSP URL
 #>
-# Read a random INI file
 Write-OutPut "Test #2: Define a custom URL"
 $myUrl = Get-BaseUrl "https://test3.csp.infoblox.com" "ddi"
 if ($myUrl -eq "https://test3.csp.infoblox.com/api/ddi/v1") {
