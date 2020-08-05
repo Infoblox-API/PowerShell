@@ -1,5 +1,7 @@
 #Requires -Version 7
 
+#Using module .\Classes\bloxone.ps1
+
 # Get public and private function definition files.
 $Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
 $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
@@ -17,6 +19,7 @@ Foreach($import in @($Public + $Private))
         Write-Error -Message "Failed to import function $($import.fullname): $_"
     }
 }
+
 
 # Export everything in the public folder
 Export-ModuleMember -Function $Public.Basename
