@@ -34,7 +34,7 @@
         Reads the bloxone.ini file in the local directory
 
     .Link
-        Get-BaseUrl
+        Get-ConfigInfo
     #>
 
     [CmdletBinding()]
