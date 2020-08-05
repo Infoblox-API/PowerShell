@@ -10,6 +10,7 @@
         Author      : Don Smith <dsmith@infoblox.com>
         Version     : 1.0 - 2020-07-29 - Initial release
                     : 1.1 - 2020-08-04 - Added ValidateSet for the cspApp
+                    : 1.2 - 2020-08-05 - Added 'anycast' to the ValidateSet
 
     .Inputs
         CSP BaseURL as System.String
@@ -54,7 +55,7 @@
       [string]$cspBaseUrl = "https://csp.infoblox.com",
 
       [Parameter(Mandatory=$True,Position=1)]
-      [ValidateSet('ddi','ddi.dns.data','host_app')] 
+      [ValidateSet('ddi','ddi.dns.data','host_app','anycast')] 
       [string]$cspApp,
 
       [Parameter(Mandatory=$False,Position=2)]  

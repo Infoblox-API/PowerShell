@@ -10,6 +10,7 @@
       Author    : Don Smith <dsmith@infoblox.com>
       Version   : 1.0 - 2020-07-29 - Initial release
                 : 1.1 - 2020-08-04 - Cleaned up notes
+                : 1.2 - 2020-08-05 - Added 'anycastUrl' as an additional return item
 
     .Inputs
       CSP Hostname URI as String
@@ -84,7 +85,7 @@
 
 
     # Build the list of apps that will be needed for creating the URLs
-    [hashtable]$cspApps = @{ipamUrl = "ddi"; dnsAppUrl = "ddi.dns.data"; hostAppUrl = "host_app"}
+    [hashtable]$cspApps = @{ipamUrl = "ddi"; dnsAppUrl = "ddi.dns.data"; hostAppUrl = "host_app"; anycastUrl = "anycast"}
 
     # See if we were passed an INI file and section
     if (($PSBoundParameters.ContainsKey('iniConfig') -eq $True) -and ($PSBoundParameters.ContainsKey('iniSection') -eq $True)) {
