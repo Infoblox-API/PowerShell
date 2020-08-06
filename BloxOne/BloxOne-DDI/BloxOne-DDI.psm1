@@ -1,6 +1,12 @@
+# Load class(es) before doing anything else
+#Using module ".\Class\bloxone.psm1"
+
 #Requires -Version 7
 
-#Using module .\Classes\bloxone.ps1
+# Remove the module if loaded so we can reload it
+# For debugging and testing purposes
+Write-Verbose "Removing old instances of functions"
+Get-Module BloxOne-DDI | Remove-Module
 
 # Get public and private function definition files.
 $Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
