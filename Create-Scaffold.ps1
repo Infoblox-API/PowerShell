@@ -9,6 +9,7 @@ $Description = "PowerShell module to work with Infoblox product APIs"
 mkdir $Path\$ModuleName
 mkdir $Path\$ModuleName\Private
 mkdir $Path\$ModuleName\Public
+mkdir $Path\$ModuleName\Class
 mkdir $Path\$ModuleName\en-US # For about_Help files
 mkdir $Path\Tests
 
@@ -20,8 +21,8 @@ New-Item "$Path\Tests\$ModuleName.Tests.ps1" -ItemType File
 New-ModuleManifest -Path $Path\$ModuleName\$ModuleName.psd1 `
                    -RootModule $ModuleName.psm1 `
                    -Description $Description `
-                   -PowerShellVersion 5.0 `
+                   -PowerShellVersion 7.0 `
                    -Author $Author `
                    -FormatsToProcess "$ModuleName.Format.ps1xml"
 
-# Copy the public/exported functions into the public folder, private functions into private folder
+# Copy the public/exported functions into the public folder, private functions into private folder, classes to the class folder

@@ -11,6 +11,19 @@
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
 
+<#
+enum appUrls {
+    /host_app
+    /ddi
+    /ddi.dns.data
+    /anycast
+    /atcfw
+    /atcep
+    /atcdfp
+    /atclad
+}
+#>
+
 class BloxOne {
     # Hide these from general display because of the API key
     hidden [string] $apiKey
@@ -23,8 +36,20 @@ class BloxOne {
     [string] $objectUrl = $null
     [psobject] $result = $null
 
+    ################################################
+    # Hidden constructors to set defaults where applicable
+    hidden Init([string]$appUrl) {
+        $this.appUrl = $appUrl
+    }
+
+    ################################################
+    # CONSTRUCTORS
+
     # Default constructor
-    BloxOne() { }
+    BloxOne() {
+        $this.baseUrl = "https://csp.infoblox.com"
+        $this.apiVersion = "v1"
+    }
 
     # Constructor with specific values provided
     BloxOne(
@@ -46,13 +71,9 @@ class BloxOne {
 
         # Define the header information
         if ($iniConfig.ContainsKey($configSection)) {
-            $this.apiKey = $iniConfig[$configSection].api_key
-            $this.headers = @{ "Authorization" = "Token $($this.apiKey)" }
-
-            $this.baseUrl = $iniConfig[$configSection].url
-            $this.apiVersion = $iniConfig[$configSection].api_Version
+            $this.SetBaseValues($iniConfig[$configSection].api_key, $iniConfig[$configSection].url, $iniConfig[$configSection].api_Version)
         } else {
-            Write-Warning "The API key '$configSection' was not found."
+            Write-Warning "The section '$configSection' was not found."
         }
     }
 
@@ -75,12 +96,24 @@ class BloxOne {
         return "baseUrl: " + $this.baseUrl + ", apiVersion: " + $this.apiVersion
     }
 
-    # Perform a GET operation
-    [void] GetRequest ([string] $obj)
+    # Perform a GET operation with additional parameters to pass for the request
+    [boolean] GetRequest ([string] $obj, [string] $args)
     {
-        # Verify $obj begins with a "/"
-        # Write code for this
+        # Clear/initialize the result buffer
         $this.result = @{}
+
+        if ([string]::IsNullOrEmpty($this.appUrl)) {
+            Write-Warning "appUrl does not have a value"
+            return $false
+        }
+        
+        # Verify $obj begins with a "/"
+        if ($obj -match '^/') {
+            Write-Verbose "$obj begins with '/'"
+        } else {
+            Write-Warning "$obj does not begin with '/'"
+            return $false
+        }
 
         # Build the full URL or what we are looking for
         $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
@@ -91,35 +124,162 @@ class BloxOne {
             
             try {
                 [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
-                $this.result = $data.result
+
+                # Some results are "result" and some are "results"
+                if ($data.result.length) {
+                    $this.result = $data.result
+                } elseif ($data.results.length) {
+                    $this.result = $data.results
+                }
+                
             } catch {
                 # Get the actual message provided by the provider
                 $reasonPhrase = $_.Exception.Message
                 Write-Error $reasonPhrase
+                return $false
             }
         }
+        return $true
+    }
+
+        # Perform a GET operation
+    [boolean] GetRequest ([string] $obj)
+    {
+        # Clear/initialize the result buffer
+        $this.result = @{}
+
+        if ([string]::IsNullOrEmpty($this.appUrl)) {
+            Write-Warning "appUrl does not have a value"
+            return $false
+        }
+        
+        # Verify $obj begins with a "/"
+        if ($obj -match '^/') {
+            Write-Verbose "$obj begins with '/'"
+        } else {
+            Write-Warning "$obj does not begin with '/'"
+            return $false
+        }
+
+        # Build the full URL or what we are looking for
+        $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
+        Write-Verbose "objectUrl = $($this.objectUrl)"
+
+        # This is for an inherited object but it may be something custom as well
+        if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
+            
+            try {
+                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+
+                # Some results are "result" and some are "results"
+                if ($data.result.length) {
+                    $this.result = $data.result
+                } elseif ($data.results.length) {
+                    $this.result = $data.results
+                }
+                
+            } catch {
+                # Get the actual message provided by the provider
+                $reasonPhrase = $_.Exception.Message
+                Write-Error $reasonPhrase
+                return $false
+            }
+        }
+        return $true
     }
 }
 
+class OPH : BloxOne {
+    # Default constructor
+    OPH() : base() {
+        $this.Init("host_app")
+    }
 
+    # Constructor with specific values provided
+    OPH([string]$apiKey, [string]$baseUrl, [string]$apiVersion) : base($apiKey, $baseUrl, $apiVersion)
+    {
+        $this.Init("host_app")
+    }
 
+    # Constructor with config file and section provided
+    OPH([string]$configFile, [string]$configSection) : base($configFile, $configSection)
+    {
+        $this.Init("host_app")
+    }
+}
+
+class DDI : BloxOne {
+    # Default constructor
+    DDI() : base() {
+        $this.Init("ddi")
+    }
+
+    # Constructor with specific values provided
+    DDI([string]$apiKey, [string]$baseUrl, [string]$apiVersion) : base($apiKey, $baseUrl, $apiVersion)
+    {
+        $this.Init("ddi")
+    }
+
+    # Constructor with config file and section provided
+    DDI([string]$configFile, [string]$configSection) : base($configFile, $configSection)
+    {
+        $this.Init("ddi")
+    }
+}
 
 #--------------------
 # Test Code
 #--------------------
+<#
+Write-Host "<<--------------------------------------------->>"
+Write-Host "BloxOne object with INI file and section"
+$b3 = [BloxOne]::New("bloxone.ini", "AMS")
+$b3.Init("host_app")
+Write-Host "BloxOne: values = " + $b3
+Write-Host "BloxOne: headers = "
+$b3.headers
+Write-Host "BloxOne:  GET"
+$b3.GetRequest("/on_prem_hosts")
+Write-Host "BloxOne: result length = " + $oph3.result.length
 
-
-$b2 = [BloxOne]::New("bloxone.ini", "AMS")
-$b2
-$b2.headers
-$b2.appUrl = "host_app"
-$b2.GetRequest("/on_prem_hosts")
-
-if( [string]::IsNullOrEmpty($b2.result) -ne $true ) {
-    $b2.result
-    #$results = ConvertFrom-Json $b2.result -Depth 10
-    #$results    
+if( [string]::IsNullOrEmpty($b3.result) -ne $true ) {
+    #$b3.result
+    #$results = ConvertFrom-Json $b3.result -Depth 10
+    #$results
 }
+#>
+
+Write-Host "<<--------------------------------------------->>"
+Write-Host "OPH object with INI file and section"
+$oph3 = [OPH]::New("bloxone.ini", "Sandbox")
+Write-Host "OPH: values = " + $oph3
+Write-Host "OPH: headers = "
+$oph3.headers
+Write-Host "OPH: GET"
+$oph3.GetRequest("/on_prem_hosts")
+Write-Host "OPH: result length = " + $oph3.result.length
+
+
+Write-Host "<<--------------------------------------------->>"
+Write-Host "DDI object with INI file and section"
+$ddi3 = [DDI]::New("bloxone.ini", "Sandbox")
+Write-Host "DDI: values = "
+$ddi3
+Write-Host "DDI: headers = "
+$ddi3.headers
+Write-Host "DDI: GET"
+$ddi3.GetRequest("/ipam/ip_space")
+Write-Host "DDI: result length = " + $ddi3.result.length
+
+if( [string]::IsNullOrEmpty($ddi3.result) -ne $true ) {
+    $ddi3.result
+    #$results = ConvertFrom-Json $b3.result -Depth 10
+    #$results
+}
+
+$objID = $ddi3.result[0].id
+$objName = $ddi3.result[0].name
+Write-Output "ID of $objName is: $objID"
 
 
 <#
