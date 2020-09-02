@@ -6,7 +6,8 @@
 ### Version: 2020-08-05 Initial release
 
 #Using module ".\Class\bloxone.psm1"
-#$VerbosePreference = 'continue'
+$VerbosePreference = 'continue'
+#$VerbosePreference = 'SilentlyContinue'
 
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
@@ -97,52 +98,9 @@ class BloxOne {
     }
 
     # Perform a GET operation with additional parameters to pass for the request
-    [boolean] GetRequest ([string] $obj, [string] $args)
-    {
-        # Clear/initialize the result buffer
-        $this.result = @{}
+#    [boolean] GetRequest ([string] $obj, [string] $args)
 
-        if ([string]::IsNullOrEmpty($this.appUrl)) {
-            Write-Warning "appUrl does not have a value"
-            return $false
-        }
-        
-        # Verify $obj begins with a "/"
-        if ($obj -match '^/') {
-            Write-Verbose "$obj begins with '/'"
-        } else {
-            Write-Warning "$obj does not begin with '/'"
-            return $false
-        }
-
-        # Build the full URL or what we are looking for
-        $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
-        Write-Verbose "objectUrl = $($this.objectUrl)"
-
-        # This is for an inherited object but it may be something custom as well
-        if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
-            
-            try {
-                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
-
-                # Some results are "result" and some are "results"
-                if ($data.result.length) {
-                    $this.result = $data.result
-                } elseif ($data.results.length) {
-                    $this.result = $data.results
-                }
-                
-            } catch {
-                # Get the actual message provided by the provider
-                $reasonPhrase = $_.Exception.Message
-                Write-Error $reasonPhrase
-                return $false
-            }
-        }
-        return $true
-    }
-
-        # Perform a GET operation
+    # Perform a GET operation
     [boolean] GetRequest ([string] $obj)
     {
         # Clear/initialize the result buffer
@@ -157,8 +115,8 @@ class BloxOne {
         if ($obj -match '^/') {
             Write-Verbose "$obj begins with '/'"
         } else {
-            Write-Warning "$obj does not begin with '/'"
-            return $false
+            $obj = "/" + $obj
+            Write-Verbose "$obj updated to include leading '/'"
         }
 
         # Build the full URL or what we are looking for
@@ -184,6 +142,7 @@ class BloxOne {
                 Write-Error $reasonPhrase
                 return $false
             }
+            Write-Verbose "# of results: $($this.result.length)"
         }
         return $true
     }
@@ -249,6 +208,7 @@ if( [string]::IsNullOrEmpty($b3.result) -ne $true ) {
 }
 #>
 
+<#
 Write-Host "<<--------------------------------------------->>"
 Write-Host "OPH object with INI file and section"
 $oph3 = [OPH]::New("bloxone.ini", "Sandbox")
@@ -258,7 +218,7 @@ $oph3.headers
 Write-Host "OPH: GET"
 $oph3.GetRequest("/on_prem_hosts")
 Write-Host "OPH: result length = " + $oph3.result.length
-
+#>
 
 Write-Host "<<--------------------------------------------->>"
 Write-Host "DDI object with INI file and section"
@@ -280,6 +240,9 @@ if( [string]::IsNullOrEmpty($ddi3.result) -ne $true ) {
 $objID = $ddi3.result[0].id
 $objName = $ddi3.result[0].name
 Write-Output "ID of $objName is: $objID"
+
+$ddi3.GetRequest($objID)
+$ddi3
 
 
 <#
