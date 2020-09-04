@@ -1,4 +1,4 @@
-﻿#Requires -Version 7
+﻿#Requires -Version 7.0
 
 ### Sample PowerShell Script for BloxOne DDI
 ### Author:  Don Smith
@@ -16,18 +16,17 @@ clear
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
 
-<#
+# Define the complete list of valid application API URLs
 enum appUrls {
-    /host_app
-    /ddi
-    /ddi.dns.data
-    /anycast
-    /atcfw
-    /atcep
-    /atcdfp
-    /atclad
+    host_app
+    ddi 
+    dns_data
+    anycast
+    atcfw
+    atcep
+    atcdfp
+    atclad
 }
-#>
 
 class BloxOne {
     # Hide these from general display because of the API key
@@ -43,8 +42,14 @@ class BloxOne {
 
     ################################################
     # Hidden constructors to set defaults where applicable
-    hidden Init([string]$appUrl) {
-        $this.appUrl = $appUrl
+    hidden Init(
+        [appUrls]$appUrl
+    ) {
+        if ($appUrl -eq "dns_data") {
+            $this.appUrl = "ddi.dns.data"
+        } else {
+            $this.appUrl = $appUrl
+        }
     }
 
     ################################################
@@ -103,6 +108,7 @@ class BloxOne {
 
     # Perform a GET operation with additional parameters to pass for the request
 #    [boolean] GetRequest ([string] $obj, [string] $args)
+#    [boolean] GetRequest ([string] $obj, [string] $args, [string] $body)
 
     # Perform a GET operation
     [boolean] GetRequest ([string] $obj)
@@ -192,6 +198,29 @@ class DDI : BloxOne {
     }
 }
 
+class DNS : BloxOne {
+    # Default constructor
+    DNS() : base() {
+        #$this.Init("dns_data")
+        $this.Init("ddi")
+    }
+
+    # Constructor with specific values provided
+    DNS([string]$apiKey, [string]$baseUrl, [string]$apiVersion) : base($apiKey, $baseUrl, $apiVersion)
+    {
+        #$this.Init("dns_data")
+        $this.Init("ddi")
+    }
+
+    # Constructor with config file and section provided
+    DNS([string]$configFile, [string]$configSection) : base($configFile, $configSection)
+    {
+        #$this.Init("dns_data")
+        $this.Init("ddi")
+    }
+}
+
+
 #--------------------
 # Test Code
 #--------------------
@@ -249,6 +278,16 @@ Write-Output "ID of $objName is: $objID"
 
 $ddi3.GetRequest($objID)
 $ddi3
+
+
+Write-Output "<<--------------------------------------------->>"
+Write-Output "DNS object with INI file and section"
+$dns1 = [DNS]::New("bloxone.ini", "Sandbox")
+Write-Output "DNS: values = "
+$dns1
+Write-Output "DNS: GET"
+$dns1.GetRequest("/dns/record")
+#$dns1.result
 
 
 <#

@@ -1,18 +1,17 @@
-#Requires -Version 7
+#Requires -Version 7.0
 
 
-<#
+# Define the complete list of valid application API URLs
 enum appUrls {
-    /host_app
-    /ddi
-    /ddi.dns.data
-    /anycast
-    /atcfw
-    /atcep
-    /atcdfp
-    /atclad
+    host_app
+    ddi 
+    dns_data
+    anycast
+    atcfw
+    atcep
+    atcdfp
+    atclad
 }
-#>
 
 class BloxOne {
     # Hide these from general display because of the API key
@@ -28,8 +27,14 @@ class BloxOne {
 
     ################################################
     # Hidden constructors to set defaults where applicable
-    hidden Init([string]$appUrl) {
-        $this.appUrl = $appUrl
+    hidden Init(
+        [appUrls]$appUrl
+    ) {
+        if ($appUrl -eq "dns_data") {
+            $this.appUrl = "ddi.dns.data"
+        } else {
+            $this.appUrl = $appUrl
+        }
     }
 
     ################################################
@@ -86,6 +91,10 @@ class BloxOne {
         return "baseUrl: " + $this.baseUrl + ", apiVersion: " + $this.apiVersion
     }
 
+    # Perform a GET operation with additional parameters to pass for the request
+#    [boolean] GetRequest ([string] $obj, [string] $args)
+#    [boolean] GetRequest ([string] $obj, [string] $args, [string] $body)
+
     # Perform a GET operation
     [boolean] GetRequest ([string] $obj)
     {
@@ -96,13 +105,13 @@ class BloxOne {
             Write-Warning "appUrl does not have a value"
             return $false
         }
-        
+
         # Verify $obj begins with a "/"
         if ($obj -match '^/') {
             Write-Verbose "$obj begins with '/'"
         } else {
-            Write-Warning "$obj does not begin with '/'"
-            return $false
+            $obj = "/" + $obj
+            Write-Verbose "$obj updated to include leading '/'"
         }
 
         # Build the full URL or what we are looking for
@@ -111,9 +120,10 @@ class BloxOne {
 
         # This is for an inherited object but it may be something custom as well
         if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
-            
+
             try {
-                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers
 
                 # Some results are "result" and some are "results"
                 if ($data.result.length) {
@@ -121,13 +131,15 @@ class BloxOne {
                 } elseif ($data.results.length) {
                     $this.result = $data.results
                 }
-                
+
             } catch {
                 # Get the actual message provided by the provider
                 $reasonPhrase = $_.Exception.Message
                 Write-Error $reasonPhrase
                 return $false
             }
+            Write-Verbose "# of results: $($this.result.length)"
+
         }
         return $true
     }
@@ -167,6 +179,28 @@ class DDI : BloxOne {
     # Constructor with config file and section provided
     DDI([string]$configFile, [string]$configSection) : base($configFile, $configSection)
     {
+        $this.Init("ddi")
+    }
+}
+
+class DNS : BloxOne {
+    # Default constructor
+    DNS() : base() {
+        #$this.Init("dns_data")
+        $this.Init("ddi")
+    }
+
+    # Constructor with specific values provided
+    DNS([string]$apiKey, [string]$baseUrl, [string]$apiVersion) : base($apiKey, $baseUrl, $apiVersion)
+    {
+        #$this.Init("dns_data")
+        $this.Init("ddi")
+    }
+
+    # Constructor with config file and section provided
+    DNS([string]$configFile, [string]$configSection) : base($configFile, $configSection)
+    {
+        #$this.Init("dns_data")
         $this.Init("ddi")
     }
 }
