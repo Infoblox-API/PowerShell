@@ -20,12 +20,12 @@ Import-Module “.\BloxOne-DDI.psd1”
 enum appUrls {
     host_app
     ddi 
-    dns_data
+    dns_data #likely an invalid value (converting to ddi.dns.data below per current documentation)
     anycast
-    atcfw
-    atcep
-    atcdfp
-    atclad
+    #atcfw
+    #atcep
+    #atcdfp
+    #atclad
 }
 
 class BloxOne {
@@ -36,7 +36,7 @@ class BloxOne {
     [string] $apiVersion
     [string] $baseUrl
 
-    [string] $appUrl = $null
+    [appUrls] $appUrl
     [string] $objectUrl = $null
     [psobject] $result = $null
 
@@ -106,17 +106,32 @@ class BloxOne {
         return "baseUrl: " + $this.baseUrl + ", apiVersion: " + $this.apiVersion
     }
 
-    # Perform a GET operation with additional parameters to pass for the request
-#    [boolean] GetRequest ([string] $obj, [string] $args)
-#    [boolean] GetRequest ([string] $obj, [string] $args, [string] $body)
-
-    # Perform a GET operation
+    # Perform a GET request without arguments or payload
     [boolean] GetRequest ([string] $obj)
+    {
+        [string] $urlArgs = $null
+        [string] $jsonBody = $null
+
+        return $this.GetRequest($obj, $urlArgs, $jsonBody)
+    }
+
+    # Perform a GET request with arguments
+    [boolean] GetRequest ([string] $obj, [string] $urlArgs)
+    {
+        [string] $jsonBody = $null
+
+        return $this.GetRequest($obj, $urlArgs, $jsonBody)
+    }
+
+    # Perform a GET request with arguments and a payload
+    [boolean] GetRequest ([string] $obj, [string] $urlArgs, [string] $jsonBody)
     {
         # Clear/initialize the result buffer
         $this.result = @{}
 
+        # Make sure we have an app API to use
         if ([string]::IsNullOrEmpty($this.appUrl)) {
+            # Eventually change this to an error
             Write-Warning "appUrl does not have a value"
             return $false
         }
@@ -129,8 +144,14 @@ class BloxOne {
             Write-Verbose "$obj updated to include leading '/'"
         }
 
-        # Build the full URL or what we are looking for
+        # Build the object URL or what we are looking for
         $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
+
+        # Add the arguments to the URL
+        if ([string]::IsNullOrEmpty($urlArgs)) {
+            # write this code
+        }
+
         Write-Verbose "objectUrl = $($this.objectUrl)"
 
         # This is for an inherited object but it may be something custom as well
@@ -138,6 +159,7 @@ class BloxOne {
 
             try {
                 #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                # Branch here if we have a payload to include in the request
                 [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers
 
                 # Some results are "result" and some are "results"
@@ -148,7 +170,7 @@ class BloxOne {
                 }
 
             } catch {
-                # Get the actual message provided by the provider
+                # Get the actual message from the provider
                 $reasonPhrase = $_.Exception.Message
                 Write-Error $reasonPhrase
                 return $false
