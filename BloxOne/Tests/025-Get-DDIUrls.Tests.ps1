@@ -11,7 +11,7 @@
 
 Write-Output @"
 ************************
->>> Beginning test <<<
+>>> Beginning test : Get-DDIUrls <<<
 ************************
 "@
 

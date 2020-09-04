@@ -5,7 +5,7 @@
 ### Version: 2020-08-03 Initial release
 
 #$DebugPreference   = 'continue'
-#$VerbosePreference = 'continue'
+$VerbosePreference = 'continue'
 
 # Remove the module if loaded so we can reload it
 # For debugging and testing purposes
