@@ -1,7 +1,7 @@
 # Load class(es) before doing anything else
 #Using module ".\Class\bloxone.psm1"
 
-#Requires -Version 7
+#Requires -Version 7.0
 
 # Remove the module if loaded so we can reload it
 # For debugging and testing purposes

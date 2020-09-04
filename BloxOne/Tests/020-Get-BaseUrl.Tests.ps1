@@ -10,7 +10,7 @@
 
 Write-Output @"
 ************************
->>> Beginning test <<<
+>>> Beginning test : Get-BaseUrl <<<
 ************************
 "@
 

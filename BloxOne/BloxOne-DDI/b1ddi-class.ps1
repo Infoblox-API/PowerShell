@@ -3,11 +3,15 @@
 ### Sample PowerShell Script for BloxOne DDI
 ### Author:  Don Smith
 ### Author-Email: dsmith@infoblox.com
-### Version: 2020-08-05 Initial release
 
 #Using module ".\Class\bloxone.psm1"
 $VerbosePreference = 'continue'
 #$VerbosePreference = 'SilentlyContinue'
+
+# Remove old functions/Cmdlets from the current module
+Write-Output "Removing old instances of functions"
+Get-Module BloxOne-DDI | Remove-Module
+clear
 
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
@@ -110,7 +114,7 @@ class BloxOne {
             Write-Warning "appUrl does not have a value"
             return $false
         }
-        
+
         # Verify $obj begins with a "/"
         if ($obj -match '^/') {
             Write-Verbose "$obj begins with '/'"
@@ -125,9 +129,10 @@ class BloxOne {
 
         # This is for an inherited object but it may be something custom as well
         if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
-            
+
             try {
-                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                [PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers
 
                 # Some results are "result" and some are "results"
                 if ($data.result.length) {
@@ -135,7 +140,7 @@ class BloxOne {
                 } elseif ($data.results.length) {
                     $this.result = $data.results
                 }
-                
+
             } catch {
                 # Get the actual message provided by the provider
                 $reasonPhrase = $_.Exception.Message
@@ -143,6 +148,7 @@ class BloxOne {
                 return $false
             }
             Write-Verbose "# of results: $($this.result.length)"
+
         }
         return $true
     }
@@ -190,16 +196,16 @@ class DDI : BloxOne {
 # Test Code
 #--------------------
 <#
-Write-Host "<<--------------------------------------------->>"
-Write-Host "BloxOne object with INI file and section"
+Write-Output "<<--------------------------------------------->>"
+Write-Output "BloxOne object with INI file and section"
 $b3 = [BloxOne]::New("bloxone.ini", "AMS")
 $b3.Init("host_app")
-Write-Host "BloxOne: values = " + $b3
-Write-Host "BloxOne: headers = "
+Write-Output "BloxOne: values = " + $b3
+Write-Output "BloxOne: headers = "
 $b3.headers
-Write-Host "BloxOne:  GET"
+Write-Output "BloxOne:  GET"
 $b3.GetRequest("/on_prem_hosts")
-Write-Host "BloxOne: result length = " + $oph3.result.length
+Write-Output "BloxOne: result length = " + $oph3.result.length
 
 if( [string]::IsNullOrEmpty($b3.result) -ne $true ) {
     #$b3.result
@@ -209,27 +215,27 @@ if( [string]::IsNullOrEmpty($b3.result) -ne $true ) {
 #>
 
 <#
-Write-Host "<<--------------------------------------------->>"
-Write-Host "OPH object with INI file and section"
+Write-Output "<<--------------------------------------------->>"
+Write-Output "OPH object with INI file and section"
 $oph3 = [OPH]::New("bloxone.ini", "Sandbox")
-Write-Host "OPH: values = " + $oph3
-Write-Host "OPH: headers = "
+Write-Output "OPH: values = " + $oph3
+Write-Output "OPH: headers = "
 $oph3.headers
-Write-Host "OPH: GET"
+Write-Output "OPH: GET"
 $oph3.GetRequest("/on_prem_hosts")
-Write-Host "OPH: result length = " + $oph3.result.length
+Write-Output "OPH: result length = " + $oph3.result.length
 #>
 
-Write-Host "<<--------------------------------------------->>"
-Write-Host "DDI object with INI file and section"
+Write-Output "<<--------------------------------------------->>"
+Write-Output "DDI object with INI file and section"
 $ddi3 = [DDI]::New("bloxone.ini", "Sandbox")
-Write-Host "DDI: values = "
+Write-Output "DDI: values = "
 $ddi3
-Write-Host "DDI: headers = "
+Write-Output "DDI: headers = "
 $ddi3.headers
-Write-Host "DDI: GET"
+Write-Output "DDI: GET"
 $ddi3.GetRequest("/ipam/ip_space")
-Write-Host "DDI: result length = " + $ddi3.result.length
+Write-Output ("DDI: result length = " + $ddi3.result.length)
 
 if( [string]::IsNullOrEmpty($ddi3.result) -ne $true ) {
     $ddi3.result

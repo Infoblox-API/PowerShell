@@ -5,15 +5,15 @@
 
 # Remove the module if loaded so we can reload it
 # For debugging and testing purposes
-Write-Host "Removing old instances of functions"
+Write-Output "Removing old instances of functions"
 Get-Module BloxOne-DDI | Remove-Module
 clear
 
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
-#Write-Host ""
+#Write-Output ""
 #Get-Command -Module BloxOne-DDI
-#Write-Host ""
+#Write-Output ""
 
 # Read the INI file for the base configuration
 $iniConfig = Get-ConfigInfo
@@ -30,7 +30,7 @@ $headers = @{
 # Get a hash table of all current DDI related API URLs
 # This example doesn't use any custom values
 [hashtable]$h = Get-DDIUrls
-[hashtable]$t1 = Get-DDIUrls -iniConfig $iniConfig #-iniSection "Sample"
+#[hashtable]$t1 = Get-DDIUrls -iniConfig $iniConfig #-iniSection "Sample"
 #[hashtable]$t2 = Get-DDIUrls -iniConfig $iniConfig -iniSection "Sample" -cspBaseUrl "http://custom.csp.infoblox.com"
 
 
