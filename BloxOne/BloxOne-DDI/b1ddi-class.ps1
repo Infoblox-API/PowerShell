@@ -45,11 +45,7 @@ class BloxOne {
     hidden Init(
         [appUrls]$appUrl
     ) {
-        if ($appUrl -eq "dns_data") {
-            $this.appUrl = "ddi.dns.data"
-        } else {
-            $this.appUrl = $appUrl
-        }
+        $this.appUrl = $appUrl
     }
 
     ################################################
@@ -116,7 +112,7 @@ class BloxOne {
     }
 
     # Perform a GET request with arguments
-    [boolean] GetRequest ([string] $obj, [string] $urlArgs)
+    [boolean] GetRequest ([string] $obj, [string] $urlArgs = $null)
     {
         [string] $jsonBody = $null
 
@@ -124,7 +120,7 @@ class BloxOne {
     }
 
     # Perform a GET request with arguments and a payload
-    [boolean] GetRequest ([string] $obj, [string] $urlArgs, [string] $jsonBody)
+    [boolean] GetRequest ([string] $obj, [string] $urlArgs = $null, [string] $jsonBody = $null)
     {
         # Clear/initialize the result buffer
         $this.result = @{}
@@ -148,8 +144,16 @@ class BloxOne {
         $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
 
         # Add the arguments to the URL
-        if ([string]::IsNullOrEmpty($urlArgs)) {
-            # write this code
+        if ([string]::IsNullOrEmpty($urlArgs) -ne $true) {
+            if ($urlArgs -match '^\?') {
+                Write-Verbose "$urlArgs begins with '?'"
+            } else {
+                $urlArgs = "?" + $urlArgs
+                $this.objectUrl = $this.objectUrl + $urlArgs
+                Write-Verbose "$urlArgs updated to include leading '?'"
+            }
+        } else {
+            Write-Verbose "no arguments passed (null or empty)"
         }
 
         Write-Verbose "objectUrl = $($this.objectUrl)"
@@ -177,8 +181,10 @@ class BloxOne {
             }
             Write-Verbose "# of results: $($this.result.length)"
 
+            return $true
         }
-        return $true
+        Write-Verbose "objectUrl was empty or null"
+        return $false
     }
 }
 
@@ -277,7 +283,7 @@ $oph3.GetRequest("/on_prem_hosts")
 Write-Output "OPH: result length = " + $oph3.result.length
 #>
 
-Write-Output "<<--------------------------------------------->>"
+Write-Output "<<----- [ddi3] ---------------------------------------->>"
 Write-Output "DDI object with INI file and section"
 $ddi3 = [DDI]::New("bloxone.ini", "Sandbox")
 Write-Output "DDI: values = "
@@ -298,11 +304,16 @@ $objID = $ddi3.result[0].id
 $objName = $ddi3.result[0].name
 Write-Output "ID of $objName is: $objID"
 
-$ddi3.GetRequest($objID)
-$ddi3
+# _filter=name=="dsmith-fusion-network1"
+# _fields=name,comment,id,tags
+Write-Output "<<----- [ddi4] ---------------------------------------->>"
+$ddi4 = [DDI]::New("bloxone.ini", "Sandbox")
+$ddi4_args = "_fields=name,comment,id,tags&_filter=name==""dsmith-fusion-network1"""
+$ddi4.GetRequest("/ipam/ip_space", $ddi4_args)
+$ddi4
 
 
-Write-Output "<<--------------------------------------------->>"
+Write-Output "<<----- [dns1] ---------------------------------------->>"
 Write-Output "DNS object with INI file and section"
 $dns1 = [DNS]::New("bloxone.ini", "Sandbox")
 Write-Output "DNS: values = "
