@@ -1,5 +1,7 @@
 # Load class(es) before doing anything else
+#Using module ".\Class\bloxonesession.psm1"
 #Using module ".\Class\bloxone.psm1"
+
 
 #Requires -Version 7.0
 
