@@ -16,6 +16,41 @@ clear
 # Load the current module
 Import-Module “.\BloxOne-DDI.psd1”
 
+class BloxOneSession {
+    [string] $apiVersion = "v1"
+    [string] $cspUrl = "https://csp.infoblox.com"
+    [string] $baseUrl = $null
+    [string] $apiKey = $null
+    [hashtable] $headers = @{"content-type" = "application/json"}
+    [Microsoft.PowerShell.Commands.WebRequestSession] $session = $null
+
+    # Purpose: Establish a connection to CSP and save the session for future use
+    [void] __INIT__ ($apiKey) {
+        $this.apiKey = $apiKey
+
+        $this.headers["Authorization"] = "Token $($apiKey)"
+        $webSession = $null
+
+        $this.baseUrl = $this.cspUrl + "/api/host_app/" + $this.apiVersion + "/"
+        $objUrl = $this.baseUrl + "on_prem_hosts"
+        $objArgs = @{"_filter" = "display_name~""/^0/"""}
+
+        Invoke-RestMethod -Method Get -Uri $objUrl -Headers $this.headers -Body $objArgs -SessionVariable webSession
+        $this.session = $webSession
+    }
+
+    BloxOneSession ($apiKey) {
+        $this.__INIT__($apiKey)
+    }
+
+    BloxOneSession ($apiVersion, $cspUrl, $apiKey) {
+        $this.apiVersion = $apiVersion
+        $this.cspUrl = $cspUrl
+        $this.__INIT__($apiKey)
+    }
+}
+
+
 # Define the complete list of valid application API URLs
 enum appUrls {
     host_app
@@ -283,6 +318,17 @@ $oph3.GetRequest("/on_prem_hosts")
 Write-Output "OPH: result length = " + $oph3.result.length
 #>
 
+
+$session1 = [BloxOneSession]::New("***REMOVED***")
+$session1
+
+
+
+
+
+<#
+
+
 Write-Output "<<----- [ddi3] ---------------------------------------->>"
 Write-Output "DDI object with INI file and section"
 $ddi3 = [DDI]::New("bloxone.ini", "Sandbox")
@@ -307,7 +353,8 @@ Write-Output "ID of $objName is: $objID"
 # _filter=name=="dsmith-fusion-network1"
 # _fields=name,comment,id,tags
 Write-Output "<<----- [ddi4] ---------------------------------------->>"
-$ddi4 = [DDI]::New("bloxone.ini", "Sandbox")
+#$ddi4 = [DDI]::New("bloxone.ini", "Sandbox")
+$ddi4 = [DDI]::New($ddi3.apiKey, $ddi3.baseUrl, $ddi3.urlVersion)
 $ddi4_args = "_fields=name,comment,id,tags&_filter=name==""dsmith-fusion-network1"""
 $ddi4.GetRequest("/ipam/ip_space", $ddi4_args)
 $ddi4
@@ -332,4 +379,8 @@ $b1
 
 $b3 = [BloxOne]::New("a123456", "https://awesome.csp.infoblox.com", "v5")
 $b3
+#>
+
+
+
 #>
