@@ -221,6 +221,186 @@ class BloxOne {
         Write-Verbose "objectUrl was empty or null"
         return $false
     }
+
+    # Perform a POST request with a payload
+    [boolean] CreateRequest ([string] $obj, [string] $jsonBody)
+    {
+        # Clear/initialize the result buffer
+        $this.result = @{}
+
+        # Make sure we have object data to send
+        if ([string]::IsNullOrEmpty($jsonBody)) {
+            # Eventually change this to an error
+            Write-Warning "object data was not supplied (jsonBody)"
+            return $false
+        }
+
+        # Make sure we have an app API to use
+        if ([string]::IsNullOrEmpty($this.appUrl)) {
+            # Eventually change this to an error
+            Write-Warning "appUrl does not have a value"
+            return $false
+        }
+
+        # Verify $obj begins with a "/"
+        if ($obj -match '^/') {
+            Write-Verbose "$obj begins with '/'"
+        } else {
+            $obj = "/" + $obj
+            Write-Verbose "$obj updated to include leading '/'"
+        }
+
+        # Build the object URL or what we are looking for
+        $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
+
+        Write-Verbose "objectUrl = $($this.objectUrl)"
+
+        # This is for an inherited object but it may be something custom as well
+        if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
+
+            try {
+                #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                # Branch here if we have a payload to include in the request
+                [PSObject] $data  = Invoke-RestMethod -Method POST -Uri $this.objectUrl -Headers $this.headers -Body $jsonBody
+
+                # Some results are "result" and some are "results"
+                if ($data.result.length) {
+                    $this.result = $data.result
+                } elseif ($data.results.length) {
+                    $this.result = $data.results
+                }
+
+            } catch {
+                # Get the actual message from the provider
+                $reasonPhrase = $_.Exception.Message
+                Write-Error $reasonPhrase
+                return $false
+            }
+            Write-Verbose "# of results: $($this.result.length)"
+
+            return $true
+        }
+        Write-Verbose "objectUrl was empty or null"
+        return $false
+    }
+
+    # Perform a PATCH request with a payload
+    [boolean] UpdateRequest ([string] $obj, [string] $jsonBody)
+    {
+        # Clear/initialize the result buffer
+        $this.result = @{}
+
+        # Make sure we have object data to send
+        if ([string]::IsNullOrEmpty($jsonBody)) {
+            # Eventually change this to an error
+            Write-Warning "object data was not supplied (jsonBody)"
+            return $false
+        }
+
+        # Make sure we have an app API to use
+        if ([string]::IsNullOrEmpty($this.appUrl)) {
+            # Eventually change this to an error
+            Write-Warning "appUrl does not have a value"
+            return $false
+        }
+
+        # Verify $obj begins with a "/"
+        if ($obj -match '^/') {
+            Write-Verbose "$obj begins with '/'"
+        } else {
+            $obj = "/" + $obj
+            Write-Verbose "$obj updated to include leading '/'"
+        }
+
+        # Build the object URL or what we are looking for
+        $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
+
+        Write-Verbose "objectUrl = $($this.objectUrl)"
+
+        # This is for an inherited object but it may be something custom as well
+        if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
+
+            try {
+                #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                # Branch here if we have a payload to include in the request
+                [PSObject] $data  = Invoke-RestMethod -Method PATCH -Uri $this.objectUrl -Headers $this.headers -Body $jsonBody
+
+                # Some results are "result" and some are "results"
+                if ($data.result.length) {
+                    $this.result = $data.result
+                } elseif ($data.results.length) {
+                    $this.result = $data.results
+                }
+
+            } catch {
+                # Get the actual message from the provider
+                $reasonPhrase = $_.Exception.Message
+                Write-Error $reasonPhrase
+                return $false
+            }
+            Write-Verbose "# of results: $($this.result.length)"
+
+            return $true
+        }
+        Write-Verbose "objectUrl was empty or null"
+        return $false
+    }
+
+    # Perform a DELETE request
+    [boolean] DeleteRequest ([string] $obj)
+    {
+        # Clear/initialize the result buffer
+        $this.result = @{}
+
+        # Make sure we have an app API to use
+        if ([string]::IsNullOrEmpty($this.appUrl)) {
+            # Eventually change this to an error
+            Write-Warning "appUrl does not have a value"
+            return $false
+        }
+
+        # Verify $obj begins with a "/"
+        if ($obj -match '^/') {
+            Write-Verbose "$obj begins with '/'"
+        } else {
+            $obj = "/" + $obj
+            Write-Verbose "$obj updated to include leading '/'"
+        }
+
+        # Build the object URL or what we are looking for
+        $this.objectUrl = $this.baseUrl + "/api/" + $this.appUrl + "/" + $this.apiVersion + "$obj"
+
+        Write-Verbose "objectUrl = $($this.objectUrl)"
+
+        # This is for an inherited object but it may be something custom as well
+        if ([string]::IsNullOrEmpty($this.objectUrl) -ne $true ) {
+
+            try {
+                #[PSObject] $data  = Invoke-RestMethod -Method Get -Uri $this.objectUrl -Headers $this.headers -ContentType "application/json"
+                # Branch here if we have a payload to include in the request
+                [PSObject] $data  = Invoke-RestMethod -Method DELETE -Uri $this.objectUrl -Headers $this.headers
+
+                # Some results are "result" and some are "results"
+                if ($data.result.length) {
+                    $this.result = $data.result
+                } elseif ($data.results.length) {
+                    $this.result = $data.results
+                }
+
+            } catch {
+                # Get the actual message from the provider
+                $reasonPhrase = $_.Exception.Message
+                Write-Error $reasonPhrase
+                return $false
+            }
+            Write-Verbose "# of results: $($this.result.length)"
+
+            return $true
+        }
+        Write-Verbose "objectUrl was empty or null"
+        return $false
+    }
+
 }
 
 class OPH : BloxOne {
@@ -287,46 +467,11 @@ class DNS : BloxOne {
 #--------------------
 # Test Code
 #--------------------
-<#
-Write-Output "<<--------------------------------------------->>"
-Write-Output "BloxOne object with INI file and section"
-$b3 = [BloxOne]::New("bloxone.ini", "AMS")
-$b3.Init("host_app")
-Write-Output "BloxOne: values = " + $b3
-Write-Output "BloxOne: headers = "
-$b3.headers
-Write-Output "BloxOne:  GET"
-$b3.GetRequest("/on_prem_hosts")
-Write-Output "BloxOne: result length = " + $oph3.result.length
-
-if( [string]::IsNullOrEmpty($b3.result) -ne $true ) {
-    #$b3.result
-    #$results = ConvertFrom-Json $b3.result -Depth 10
-    #$results
-}
-#>
 
 <#
-Write-Output "<<--------------------------------------------->>"
-Write-Output "OPH object with INI file and section"
-$oph3 = [OPH]::New("bloxone.ini", "Sandbox")
-Write-Output "OPH: values = " + $oph3
-Write-Output "OPH: headers = "
-$oph3.headers
-Write-Output "OPH: GET"
-$oph3.GetRequest("/on_prem_hosts")
-Write-Output "OPH: result length = " + $oph3.result.length
-#>
-
-
 $session1 = [BloxOneSession]::New("***REMOVED***")
 $session1
-
-
-
-
-
-<#
+#>
 
 
 Write-Output "<<----- [ddi3] ---------------------------------------->>"
@@ -349,6 +494,25 @@ if( [string]::IsNullOrEmpty($ddi3.result) -ne $true ) {
 $objID = $ddi3.result[0].id
 $objName = $ddi3.result[0].name
 Write-Output "ID of $objName is: $objID"
+
+# Create a new object
+$newObjJson = "{ ""name"":""delete_me"", ""comment"":""Created via PowerShell script"" }"
+$newObjType = "/ipam/ip_space"
+$ddi3.CreateRequest($newObjType, $newObjJson)
+
+# Retrieve the object
+$ddi3_args = "_fields=name,comment,id,tags&_filter=name==""delete_me"""
+$ddi3.GetRequest("/ipam/ip_space", $ddi3_args)
+$objID = $ddi3.result[0].id
+
+# Update the object
+$newObjJson = "{ ""name"":""patched_me"", ""comment"":""Updated via PowerShell script"" }"
+$ddi3.UpdateRequest($objID, $newObjJson)
+
+# Delete the object
+$ddi3.DeleteRequest($objID)
+
+<#
 
 # _filter=name=="dsmith-fusion-network1"
 # _fields=name,comment,id,tags
@@ -383,4 +547,4 @@ $b3
 
 
 
-#>
+#> 
